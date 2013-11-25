@@ -16,15 +16,6 @@ import android.graphics.Typeface;
 
 public class KbView extends View {
 
-    private int mNumColumns[] = {
-	10, 9, 7, 10
-    };
-    private char mKeys[][] = {
-	{ 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P' },
-	{ 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L',   0 },
-	{ 'Z', 'X', 'C', 'V', 'B', 'N', 'M',   0,   0,   0 },
-	{   0,   0,   0,   0,   0,   0,   0,   0,   0,   0 },
-    };
     private Drawable mNormal = null;
     private Paint mPaint;
     private FontMetricsInt mFmi;
@@ -55,7 +46,7 @@ public class KbView extends View {
     	int mKbWidth  = SystemParams.getInstance().getWidth();
     	int mKbHeight = SystemParams.getInstance().getHeight();
 
-	Keyboard keyboard = SystemParams.getInstance().getKeyboard("STROKE");
+	Keyboard keyboard = SystemParams.getInstance().getKeyboard("CANGJIE");
 	
 	final float keyHeight = (float) mKbHeight / (float) keyboard.getRow();
     	final float keyYMargin = (float) (keyHeight * 0.05);
@@ -64,6 +55,8 @@ public class KbView extends View {
 	int rowNum = 0;
 	int colNum = 0;
 	char c[] = new char[4];
+	int states[] = new int[1];
+	int normal_states[] = new int[0];
 
 	for (float y = keyYStart; y < mKbHeight; y += keyHeight) {
 	    if (rowNum >= keyboard.getRow()) continue;
@@ -76,6 +69,15 @@ public class KbView extends View {
 		final float keyWidth = (float) mKbWidth * (float) key.mSize;
 		final float keyXMargin = (float) (keyWidth * 0.008);
 
+		if (key.mType == KeyType.ACTION) {
+		    states[0] = android.R.attr.state_active;
+		    mNormal.setState(states);
+		} else if (key.mType == KeyType.INPUT_METHOD || key.mType == KeyType.DELETE || key.mType == KeyType.SHIFT) {
+		    states[0] = android.R.attr.state_single;
+		    mNormal.setState(states);
+		} else {
+		    mNormal.setState(normal_states);
+		}
 		mNormal.setBounds((int) (x + keyXMargin),
 				  (int) (y + keyYMargin),
 				  (int) (x + keyWidth - keyXMargin),
@@ -127,57 +129,6 @@ public class KbView extends View {
 	    rowNum++;
 	}
 
-	/*
-    	float keyHeight = (float) mKbHeight / (float) mNumRows;
-    	float keyWidth = (float) mKbWidth / (float) mNumCols;
-    	float keyXMargin = (float) (keyWidth * 0.05);
-    	float keyYMargin = (float) (keyHeight * 0.05);
-
-    	int keyXStart = 0;
-    	int keyYStart = 0;
-    	int index = 0;
-    	int colXMargin = 0;
-    	int column = 0;
-    	int row = 0;
-    	char c[] = new char[1];
-
-    	for (int y = keyYStart; y < mKbHeight; y += keyHeight) {
-    		if (index < mNumColumns.length)
-    			colXMargin = (int) (mKbWidth - mNumColumns[index] * keyWidth) / 2;
-    		else
-    			colXMargin = 0;
-    		column = 0;
-    		for (int x = keyXStart + colXMargin; x < mKbWidth; x += keyWidth) {
-    			if (index < mNumColumns.length) {
-    				if (column >= mNumColumns[index]) {
-    					continue;
-    				}
-    			}
-    			mNormal.setBounds((int) (x + keyXMargin),
-    					(int) (y + keyYMargin),
-    					(int) (x + keyWidth - keyXMargin),
-    					(int) (y + keyHeight - keyYMargin));
-    			mNormal.draw(canvas);
-    			if (index < mNumColumns.length) {
-    				c[0] = mKeys[row][column];
-    				if (c[0] != 0) {
-    					mPaint.setColor(Color.WHITE);
-    					mPaint.setTextSize(40);
-
-    					float mx = x + (keyWidth - mPaint.measureText(c, 0, 1)) / 2.0f;
-    					int fontHeight = mFmi.bottom - mFmi.top;
-    					float my = (keyHeight - fontHeight) / 2.0f;
-    					my = y + keyYMargin + my - mFmi.top + mFmi.bottom / 1.5f;
-    					canvas.drawText(c, 0, 1, mx, my + 1, mPaint);
-    				}
-
-    			}
-    			column++;
-    		}
-    		index = index + 1;
-    		row++;
-    	}
-	*/
     }
 
 }

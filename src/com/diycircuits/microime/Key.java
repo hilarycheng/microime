@@ -2,6 +2,7 @@ package com.diycircuits.microime;
 
 import java.util.ArrayList;
 import android.util.Log;
+import android.graphics.Rect;
 
 public class Key {
 
@@ -10,6 +11,8 @@ public class Key {
     public char mKey = ' ';
 
     public KeyType mType = KeyType.NORMAL;
+
+    public Rect mBounds = new Rect();
 
     public String toString() {
 	StringBuffer sb = new StringBuffer();

@@ -1,12 +1,15 @@
 package com.diycircuits.microime;
 
 import java.util.ArrayList;
+import android.graphics.Rect;
 
 public class KeyRow {
 
     private ArrayList<Key> mKeyList = new ArrayList<Key>();
 
     private double mOffset = 0.0;
+    
+    public Rect mBounds = new Rect();
 
     public void setOffset(double m) {
 	mOffset = m;

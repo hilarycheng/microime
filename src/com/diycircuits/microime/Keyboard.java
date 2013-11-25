@@ -11,6 +11,16 @@ public class Keyboard {
 
     private int mColumn = 0;
 
+    private boolean mBoundSetup = false;
+
+    public boolean isBoundSetup() {
+	return mBoundSetup;
+    }
+
+    public void setBoundSetup(boolean setup) {
+	mBoundSetup = setup;
+    }
+
     public void addRow(KeyRow row) {
 	mKeyRow.add(row);
 	if (row.getColumn() > mColumn) mColumn = row.getColumn();
