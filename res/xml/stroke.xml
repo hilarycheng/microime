@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<keyboard name="STROKE">
+  <!--
+  <row type="numrow">
+    <keys size="10%" value="1234567890" />
+  </row>
+  -->
+  <row>
+    <keys size="17%" value="!" />
+    <keys size="22%" value="一丨丿" />
+    <keys size="17%" value="…" />
+  </row>
+  <row>
+    <keys size="17%" value="？" />
+    <keys size="22%" value="丶フ＊" />
+    <key  size="17%" type="delete" />
+  </row>
+  <row>
+    <key size="15%" type="inputmethod" />
+    <key size="10%" type="comma" />
+    <key size="50%" type="space" />
+    <key size="10%" type="dot" />
+    <key size="15%" type="action" />
+  </row>
+</keyboard>

@@ -55,7 +55,7 @@ public class KbView extends View {
     	int mKbWidth  = SystemParams.getInstance().getWidth();
     	int mKbHeight = SystemParams.getInstance().getHeight();
 
-	Keyboard keyboard = SystemParams.getInstance().getKeyboard("CANGJIE");
+	Keyboard keyboard = SystemParams.getInstance().getKeyboard("STROKE");
 	
 	final float keyHeight = (float) mKbHeight / (float) keyboard.getRow();
     	final float keyYMargin = (float) (keyHeight * 0.05);
