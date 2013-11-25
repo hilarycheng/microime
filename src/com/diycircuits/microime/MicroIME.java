@@ -12,15 +12,17 @@ import android.view.inputmethod.CompletionInfo;
 public class MicroIME extends InputMethodService
 {
 
-	private KbView mKbView = null;
+    private KbContainer mKbContainer = null;
 	
-	public MicroIME() {
-		
-	}
+    public MicroIME() {
+    }
 
     @Override
     public void onCreate() {
     	super.onCreate();
+    	
+    	Configuration c = this.getResources().getConfiguration();
+    	SystemParams.getInstance().configurationChanged(c, this);
     }
 
     @Override
@@ -41,6 +43,8 @@ public class MicroIME extends InputMethodService
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
     	super.onConfigurationChanged(newConfig);
+
+	SystemParams.getInstance().configurationChanged(newConfig, this);
     }
 
     @Override
@@ -51,9 +55,9 @@ public class MicroIME extends InputMethodService
     @Override
     public View onCreateInputView() {
         LayoutInflater inflater = getLayoutInflater();
-        mKbView = (KbView) inflater.inflate(R.layout.kb_view, null);
+        mKbContainer = (KbContainer) inflater.inflate(R.layout.kb_container, null);
 
-    	return mKbView;
+    	return mKbContainer;
     }
 
     @Override

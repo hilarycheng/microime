@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<keyboard name="QWERTY">
+  <!--
+  <row type="numrow">
+    <keys size="10%" value="1234567890" />
+  </row>
+  -->
+  <row>
+    <keys size="10%" value="QWERTYUIOP" />
+  </row>
+  <row offset="5%">
+    <keys size="10%" value="ASDFGHJKL" />
+  </row>
+  <row>
+    <key size="15%" type="shift" />
+    <keys size="10%" value="ZXCVBNM" />
+    <key size="15%" type="delete" />
+  </row>
+  <row>
+    <key size="15%" type="inputmethod" />
+    <key size="10%" type="comma" />
+    <key size="50%" type="space" />
+    <key size="10%" type="dot" />
+    <key size="15%" type="action" />
+  </row>
+</keyboard>
