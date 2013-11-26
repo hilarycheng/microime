@@ -36,8 +36,8 @@ public class KbView extends View {
    
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-    	int mKbWidth  = SystemParams.getInstance().getWidth();
-    	int mKbHeight = SystemParams.getInstance().getHeight();
+    	final int mKbWidth  = SystemParams.getInstance().getWidth();
+    	final int mKbHeight = SystemParams.getInstance().getHeight();
         setMeasuredDimension(mKbWidth, mKbHeight);
     }
 
@@ -46,7 +46,7 @@ public class KbView extends View {
 	super.onTouchEvent(event);
 
 	Log.i("MicroIME", "OnTouchEvent " + event);
-	final Keyboard keyboard = SystemParams.getInstance().getKeyboard("CANGJIE");
+	final Keyboard keyboard = KeyboardState.getInstance().getCurrentKeyboard();
 	for (int row = 0; row < keyboard.getRow(); row++) {
 	    boolean inter = keyboard.getRow(row).mBounds.contains((int) event.getX(), (int) event.getY());
 	    if (!inter) continue;
@@ -66,12 +66,12 @@ public class KbView extends View {
     protected void onDraw(Canvas canvas) {
 	super.onDraw(canvas);
 
-	Keyboard keyboard = SystemParams.getInstance().getKeyboard("CANGJIE");
+	final Keyboard keyboard = KeyboardState.getInstance().getCurrentKeyboard();
 
 	for (int row = 0; row < keyboard.getRow(); row++) {
-	    KeyRow keyRow = keyboard.getRow(row);
+	    final KeyRow keyRow = keyboard.getRow(row);
 	    for (int col = 0; col < keyRow.getColumn(); col++) {
-		Key key = keyRow.getKey(col);
+		final Key key = keyRow.getKey(col);
 
 		mNormal.setState(key.mStates);
 		mNormal.setBounds(key.mBounds);
