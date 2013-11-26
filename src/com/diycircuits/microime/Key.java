@@ -8,11 +8,23 @@ public class Key {
 
     public double mSize = 0.0;
 
-    public char mKey = ' ';
+    public char mKey[] = new char[4];
+
+    public int mKeyLen = 0;
+
+    public int mFontSize = 0;
 
     public KeyType mType = KeyType.NORMAL;
 
     public Rect mBounds = new Rect();
+
+    public Rect mIconBounds = null;
+
+    public int mStates[] = { 0, 0, 0 };
+
+    public float mMainX = (float) 0.0;
+
+    public float mMainY = (float) 0.0;
 
     public String toString() {
 	StringBuffer sb = new StringBuffer();

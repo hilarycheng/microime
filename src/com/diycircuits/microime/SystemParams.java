@@ -9,6 +9,11 @@ import android.graphics.drawable.Drawable;
 import android.util.Log;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
+import android.graphics.Rect;
+import android.graphics.Typeface;
+import android.graphics.Paint;
+import android.graphics.Paint.FontMetricsInt;
 
 public class SystemParams {
 
@@ -18,8 +23,15 @@ public class SystemParams {
     private boolean mKeyboardLoaded = false;
     private HashMap<String, Keyboard> mKeyboard = new HashMap<String, Keyboard>();
     private HashMap<KeyType, Drawable> mKeyIcon = new HashMap<KeyType, Drawable>();
+    private Typeface tf = Typeface.create("Droid Sans",Typeface.BOLD);
+    private Paint mPaint;
+    private FontMetricsInt mFmi;
 
     private SystemParams() {
+        mPaint = new Paint();
+        mPaint.setAntiAlias(true);
+	mPaint.setTypeface(tf);
+        mFmi = mPaint.getFontMetricsInt();
     }
     
     public static SystemParams getInstance() {
@@ -52,9 +64,85 @@ public class SystemParams {
 	    loadKeyboardXml(context, R.xml.qwerty);
 	    loadKeyboardXml(context, R.xml.cangjie);
 	    loadKeyboardXml(context, R.xml.stroke);
+
+	    Set<String> keys = mKeyboard.keySet();
+	    for (String key: keys) {
+		Keyboard keyboard = mKeyboard.get(key);
+		calculateKeyboard(keyboard);
+	    }
 	}
     }
 
+    private void calculateKeyboard(Keyboard keyboard) {
+	final float keyHeight = (float) mKbHeight / (float) keyboard.getRow();
+    	final float keyYMargin = (float) (keyHeight * 0.05);
+    	float keyYStart = 0;
+    	float keyXStart = 0;
+	int rowNum = 0;
+	int colNum = 0;
+	char c[] = new char[4];
+	int states[] = new int[1];
+	int normal_states[] = new int[0];
+	
+	for (float y = keyYStart; y < mKbHeight; y += keyHeight) {
+	    if (rowNum >= keyboard.getRow()) continue;
+	    final KeyRow row = keyboard.getRow(rowNum);
+	    keyXStart = (float) mKbWidth * (float) row.getOffset();
+	    float x = keyXStart;
+	    colNum = 0;
+	    while (colNum < row.getColumn()) {
+		final Key key = row.getKey(colNum);
+		final float keyWidth = (float) mKbWidth * (float) key.mSize;
+		final float keyXMargin = (float) (keyWidth * 0.008);
+
+		key.mBounds.set((int) (x + keyXMargin),
+				(int) (y + keyYMargin),
+				(int) (x + keyWidth - keyXMargin),
+				(int) (y + keyHeight - keyYMargin));
+
+		if (key.mType == KeyType.ACTION) {
+		    key.mStates[0] = android.R.attr.state_active;
+		} else if (key.mType == KeyType.INPUT_METHOD || key.mType == KeyType.DELETE || key.mType == KeyType.SHIFT) {
+		    key.mStates[0] = android.R.attr.state_single;
+		} else {
+		    key.mStates[0] = 0;
+		}
+
+		if (key.mType == KeyType.NORMAL ||
+		    key.mType == KeyType.DOT ||
+		    key.mType == KeyType.INPUT_METHOD ||
+		    key.mType == KeyType.COMMA) {
+
+		    key.mFontSize = 56;
+		    if (key.mType == KeyType.INPUT_METHOD) {
+			key.mFontSize = 48;
+		    }
+		    mPaint.setTextSize(key.mFontSize);
+		    float mx = x + (keyWidth - mPaint.measureText(key.mKey, 0, key.mKeyLen)) / 2.0f;
+		    int fontHeight = mFmi.bottom - mFmi.top;
+		    float my = (keyHeight - fontHeight) / 2.0f;
+		    my = y + keyYMargin + my - mFmi.top + mFmi.bottom / 1.5f;
+
+		    key.mMainX = mx;
+		    key.mMainY = my + 1;
+		} else {
+		    final Drawable icon = getIcon(key.mType);
+		    if (icon != null) {
+			int marginLeft   = (int) ((keyWidth - icon.getIntrinsicWidth()) / 2);
+			int marginRight  = (int) (keyWidth - icon.getIntrinsicWidth() - marginLeft);
+			int marginTop    = (int) ((keyHeight - icon.getIntrinsicHeight()) / 2);
+			int marginBottom = (int) (keyHeight - icon.getIntrinsicHeight() - marginTop);
+			key.mIconBounds = new Rect();
+			key.mIconBounds.set((int) (x + marginLeft), (int) (y + marginTop), (int) (x + keyWidth - marginRight), (int) (y + keyHeight - marginBottom));
+		    }
+		}
+		x += keyWidth;
+		colNum++;
+	    }
+	    rowNum++;
+	}
+    }
+    
     private void loadKeyboardXml(Context context, int id) {
 	Keyboard keyboard = new Keyboard();
 

@@ -22,7 +22,7 @@ public class KeyRow {
     public void addKey(double size, String type) {
 	Key key = new Key();
 	key.mSize = size;
-	key.mKey = ' ';
+	key.mKeyLen = 0;
 	if (type.compareTo("shift") == 0) {
 	    key.mType = KeyType.SHIFT;
 	} else if (type.compareTo("enter") == 0) {
@@ -31,12 +31,21 @@ public class KeyRow {
 	    key.mType = KeyType.DELETE;
 	} else if (type.compareTo("inputmethod") == 0) {
 	    key.mType = KeyType.INPUT_METHOD;
+	    key.mKey[0] = '?';
+	    key.mKey[1] = '1';
+	    key.mKey[2] = '2';
+	    key.mKey[3] = '3';
+	    key.mKeyLen = 4;
 	} else if (type.compareTo("comma") == 0) {
 	    key.mType = KeyType.COMMA;
+	    key.mKey[0] = ',';
+	    key.mKeyLen = 1;
 	} else if (type.compareTo("space") == 0) {
 	    key.mType = KeyType.SPACE;
 	} else if (type.compareTo("dot") == 0) {
 	    key.mType = KeyType.DOT;
+	    key.mKey[0] = '.';
+	    key.mKeyLen = 1;
 	} else if (type.compareTo("action") == 0) {
 	    key.mType = KeyType.ACTION;
 	}
@@ -47,7 +56,8 @@ public class KeyRow {
 	for (int count = 0; count < value.length(); count++) {
 	    Key key = new Key();
 	    key.mSize = size;
-	    key.mKey = value.charAt(count);
+	    key.mKey[0] = value.charAt(count);
+	    key.mKeyLen = 1;
 	    key.mType = KeyType.NORMAL;
 	    mKeyList.add(key);
 	}

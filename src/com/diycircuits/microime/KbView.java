@@ -43,11 +43,12 @@ public class KbView extends View {
     private final Rect mTextBounds = new Rect();
 
     protected void onDraw(Canvas canvas) {
-    	int mKbWidth  = SystemParams.getInstance().getWidth();
-    	int mKbHeight = SystemParams.getInstance().getHeight();
+    	// int mKbWidth  = SystemParams.getInstance().getWidth();
+    	// int mKbHeight = SystemParams.getInstance().getHeight();
 
 	Keyboard keyboard = SystemParams.getInstance().getKeyboard("CANGJIE");
-	
+
+	/*
 	final float keyHeight = (float) mKbHeight / (float) keyboard.getRow();
     	final float keyYMargin = (float) (keyHeight * 0.05);
     	float keyYStart = 0;
@@ -127,6 +128,35 @@ public class KbView extends View {
 		colNum++;
 	    }
 	    rowNum++;
+	}
+
+	*/
+
+	for (int row = 0; row < keyboard.getRow(); row++) {
+	    KeyRow keyRow = keyboard.getRow(row);
+	    for (int col = 0; col < keyRow.getColumn(); col++) {
+		Key key = keyRow.getKey(col);
+
+		mNormal.setState(key.mStates);
+		mNormal.setBounds(key.mBounds);
+		mNormal.draw(canvas);
+
+		if (key.mType == KeyType.NORMAL ||
+		    key.mType == KeyType.DOT ||
+		    key.mType == KeyType.INPUT_METHOD ||
+		    key.mType == KeyType.COMMA) {
+
+		    mPaint.setColor(Color.WHITE);
+		    mPaint.setTextSize(key.mFontSize);
+		    canvas.drawText(key.mKey, 0, key.mKeyLen, key.mMainX, key.mMainY, mPaint);
+		} else {
+		    final Drawable icon = SystemParams.getInstance().getIcon(key.mType);
+		    if (icon != null) {
+			icon.setBounds(key.mIconBounds);
+			icon.draw(canvas);
+		    }
+		}
+	    }
 	}
 
     }
