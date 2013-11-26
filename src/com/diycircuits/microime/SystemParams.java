@@ -100,6 +100,8 @@ public class SystemParams {
 				(int) (x + keyWidth - keyXMargin),
 				(int) (y + keyHeight - keyYMargin));
 
+		row.mBounds.union(key.mBounds);
+
 		if (key.mType == KeyType.ACTION) {
 		    key.mStates[0] = android.R.attr.state_active;
 		} else if (key.mType == KeyType.INPUT_METHOD || key.mType == KeyType.DELETE || key.mType == KeyType.SHIFT) {
@@ -155,7 +157,6 @@ public class SystemParams {
 	    while (xmlEvent != XmlResourceParser.END_DOCUMENT) {
 		if (xmlEvent == XmlResourceParser.START_TAG) {
 		    String tag = xrp.getName();
-		    Log.i("MicroIME", "XRP Attr " + tag);
 		    if (tag.compareTo("keyboard") == 0) {
 			name = getXmlString(xrp, "name", "");
 			keyboard.setName(name);
@@ -179,7 +180,6 @@ public class SystemParams {
 
 	    mKeyboard.put(name, keyboard);
 
-	    Log.i("MicroIME", "Key " + mKeyboard);
 	} catch (org.xmlpull.v1.XmlPullParserException ex) {
 	    Log.i("MicroIME", "LoadKeyboardXml", ex);
 	} catch (java.io.IOException ex) {
@@ -190,7 +190,6 @@ public class SystemParams {
     public String getXmlString(XmlResourceParser xrp, String name, String defValue) {
 	int resId = xrp.getAttributeResourceValue(null, name, 0);
 	if (resId == 0) {
-	    Log.i("MicroIME", "getXmlString " + resId + " " + name + " " + xrp.getAttributeValue(null, name));
 	    return xrp.getAttributeValue(null, name);
 	} else {
 	    return defValue;

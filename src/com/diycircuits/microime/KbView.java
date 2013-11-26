@@ -11,6 +11,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.FontMetricsInt;
 import android.view.Display;
 import android.view.WindowManager;
+import android.view.MotionEvent;
 import android.util.Log;
 import android.graphics.Typeface;
 
@@ -41,7 +42,30 @@ public class KbView extends View {
     }
 
     @Override
+    public boolean onTouchEvent(MotionEvent event) {
+	super.onTouchEvent(event);
+
+	Log.i("MicroIME", "OnTouchEvent " + event);
+	final Keyboard keyboard = SystemParams.getInstance().getKeyboard("CANGJIE");
+	for (int row = 0; row < keyboard.getRow(); row++) {
+	    boolean inter = keyboard.getRow(row).mBounds.contains((int) event.getX(), (int) event.getY());
+	    if (!inter) continue;
+	    final KeyRow keyRow = keyboard.getRow(row);
+	    for (int col = 0; col < keyRow.getColumn(); col++) {
+		inter = keyRow.getKey(col).mBounds.contains((int) event.getX(), (int) event.getY());
+		if (!inter) continue;
+		Log.i("MicroIME", "OnTouchEvent " + event + " " + row + " " + col + " " + inter + " " + keyRow.getKey(col).mKey[0]);
+		return true;
+	    }
+	}
+	
+	return false;
+    }
+    
+    @Override
     protected void onDraw(Canvas canvas) {
+	super.onDraw(canvas);
+
 	Keyboard keyboard = SystemParams.getInstance().getKeyboard("CANGJIE");
 
 	for (int row = 0; row < keyboard.getRow(); row++) {
