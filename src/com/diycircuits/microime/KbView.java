@@ -40,6 +40,7 @@ public class KbView extends View {
         setMeasuredDimension(mKbWidth, mKbHeight);
     }
 
+    @Override
     protected void onDraw(Canvas canvas) {
 	Keyboard keyboard = SystemParams.getInstance().getKeyboard("CANGJIE");
 
