@@ -5,17 +5,17 @@
     <keys size="10%" value="1234567890" />
   </row>
   -->
-  <row>
+  <row size="38%">
     <keys size="17%" value="!" />
     <keys size="22%" value="一丨丿" />
     <keys size="17%" value="…" />
   </row>
-  <row>
+  <row size="37%">
     <keys size="17%" value="？" />
     <keys size="22%" value="丶フ＊" />
     <key  size="17%" type="delete" />
   </row>
-  <row>
+  <row size="25%">
     <key size="15%" type="inputmethod" />
     <key size="10%" type="comma" />
     <key size="50%" type="space" />

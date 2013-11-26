@@ -8,6 +8,8 @@ public class KeyRow {
     private ArrayList<Key> mKeyList = new ArrayList<Key>();
 
     private double mOffset = 0.0;
+
+    private double mSize = 0.0;
     
     public Rect mBounds = new Rect();
 
@@ -17,6 +19,14 @@ public class KeyRow {
 
     public double getOffset() {
 	return mOffset;
+    }
+
+    public void setSize(double m) {
+	mSize = m;
+    }
+
+    public double getSize() {
+	return mSize;
     }
 
     public void addKey(double size, String type) {

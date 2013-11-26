@@ -5,18 +5,18 @@
     <keys size="10%" value="1234567890" />
   </row>
   -->
-  <row>
+  <row size="25%">
     <keys size="10%" value="手田水口廿卜山戈人心" />
   </row>
-  <row offset="5%">
+  <row size="25%" offset="5%">
     <keys size="10%" value="日尸木火土竹十大中" />
   </row>
-  <row>
+  <row size="25%">
     <key size="15%" type="shift" />
     <keys size="10%" value="＊難金女月弓一" />
     <key size="15%" type="delete" />
   </row>
-  <row>
+  <row size="25%">
     <key size="15%" type="inputmethod" />
     <key size="10%" type="comma" />
     <key size="50%" type="space" />

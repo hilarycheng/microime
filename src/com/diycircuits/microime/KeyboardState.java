@@ -7,7 +7,7 @@ public class KeyboardState {
 
     private final static KeyboardState mInstance = new KeyboardState();
 
-    private String mCurrent = "STROKE";
+    private String mCurrent = "CANGJIE";
     
     private KeyboardState() {
     }

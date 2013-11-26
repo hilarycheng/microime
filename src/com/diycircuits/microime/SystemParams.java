@@ -74,8 +74,8 @@ public class SystemParams {
     }
 
     private void calculateKeyboard(Keyboard keyboard) {
-	final float keyHeight = (float) mKbHeight / (float) keyboard.getRow();
-    	final float keyYMargin = (float) (keyHeight * 0.05);
+	float keyHeight = (float) mKbHeight / (float) keyboard.getRow();
+    	float keyYMargin = (float) (keyHeight * 0.05);
     	float keyYStart = 0;
     	float keyXStart = 0;
 	int rowNum = 0;
@@ -84,9 +84,14 @@ public class SystemParams {
 	int states[] = new int[1];
 	int normal_states[] = new int[0];
 	
-	for (float y = keyYStart; y < mKbHeight; y += keyHeight) {
+	// for (float y = keyYStart; y < mKbHeight; y += keyHeight) {
+	for (float y = 0; y < mKbHeight;) {
 	    if (rowNum >= keyboard.getRow()) continue;
 	    final KeyRow row = keyboard.getRow(rowNum);
+
+	    keyHeight = (float) (mKbHeight * row.getSize());
+	    keyYMargin = (float) (keyHeight * 0.05);
+
 	    keyXStart = (float) mKbWidth * (float) row.getOffset();
 	    float x = keyXStart;
 	    colNum = 0;
@@ -142,6 +147,7 @@ public class SystemParams {
 		colNum++;
 	    }
 	    rowNum++;
+	    y += keyHeight;
 	}
     }
     
@@ -164,6 +170,7 @@ public class SystemParams {
 			if (row != null) keyboard.addRow(row);
 			row = new KeyRow();
 			row.setOffset(getXmlSize(xrp, "offset", 0.0));
+			row.setSize(getXmlSize(xrp, "size", 0.0));
 		    } else if (tag.compareTo("keys") == 0) {
 			double size = getXmlSize(xrp, "size", 0.0); 
 			String value = getXmlString(xrp, "value", "");
