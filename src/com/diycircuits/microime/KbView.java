@@ -23,6 +23,7 @@ public class KbView extends View {
     private int mNumRows = 4;
     private int mNumCols = 10;
     private Typeface tf = Typeface.create("Droid Sans",Typeface.BOLD);
+    private KeyListener mListener = null;
 
     public KbView(Context context, AttributeSet attrs) {
     	super(context, attrs);
@@ -33,7 +34,11 @@ public class KbView extends View {
 	mPaint.setTypeface(tf);
         mFmi = mPaint.getFontMetricsInt();
     }
-   
+
+    public void setKeyListener(KeyListener listen) {
+	mListener = listen;
+    }
+    
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     	final int mKbWidth  = SystemParams.getInstance().getWidth();
@@ -45,16 +50,20 @@ public class KbView extends View {
     public boolean onTouchEvent(MotionEvent event) {
 	super.onTouchEvent(event);
 
-	Log.i("MicroIME", "OnTouchEvent " + event);
+	// Log.i("MicroIME", "OnTouchEvent " + event);
 	final Keyboard keyboard = KeyboardState.getInstance().getCurrentKeyboard();
 	for (int row = 0; row < keyboard.getRow(); row++) {
 	    boolean inter = keyboard.getRow(row).mBounds.contains((int) event.getX(), (int) event.getY());
 	    if (!inter) continue;
 	    final KeyRow keyRow = keyboard.getRow(row);
 	    for (int col = 0; col < keyRow.getColumn(); col++) {
-		inter = keyRow.getKey(col).mBounds.contains((int) event.getX(), (int) event.getY());
+		final Key key = keyRow.getKey(col);
+		inter = key.mBounds.contains((int) event.getX(), (int) event.getY());
 		if (!inter) continue;
-		Log.i("MicroIME", "OnTouchEvent " + event + " " + row + " " + col + " " + inter + " " + keyRow.getKey(col).mKey[0]);
+		// Log.i("MicroIME", "OnTouchEvent " + event + " " + row + " " + col + " " + inter + " " + key.mKey[0]);
+		if (event.getAction() == MotionEvent.ACTION_UP && mListener != null) {
+		    mListener.keyPressed(key.mKey[0], key.mType);
+		}
 		return true;
 	    }
 	}

@@ -8,9 +8,9 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodSubtype;
 import android.view.inputmethod.CompletionInfo;
+import android.util.Log;
 
-public class MicroIME extends InputMethodService
-{
+public class MicroIME extends InputMethodService implements KeyListener {
 
     private KbContainer mKbContainer = null;
 	
@@ -57,6 +57,9 @@ public class MicroIME extends InputMethodService
         LayoutInflater inflater = getLayoutInflater();
         mKbContainer = (KbContainer) inflater.inflate(R.layout.kb_container, null);
 
+	final KbView view = (KbView) mKbContainer.findViewById(R.id.kbView);
+	view.setKeyListener(this);
+
     	return mKbContainer;
     }
 
@@ -86,6 +89,10 @@ public class MicroIME extends InputMethodService
     @Override
     public void requestHideSelf(int flags) {
         super.requestHideSelf(flags);
+    }
+
+    public void keyPressed(char code, KeyType type) {
+	Log.i("MicroIME", "Key Pressed " + code + " " + type);
     }
 
 }
