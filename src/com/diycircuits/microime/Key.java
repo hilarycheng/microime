@@ -26,6 +26,22 @@ public class Key {
 
     public float mMainY = (float) 0.0;
 
+    public void setPressed() {
+	if (mType == KeyType.ACTION || mType == KeyType.INPUT_METHOD || mType == KeyType.DELETE || mType == KeyType.SHIFT) {
+	    mStates[1] = android.R.attr.state_pressed;
+	} else {
+	    mStates[0] = android.R.attr.state_pressed;
+	}
+    }
+
+    public void setRelease() {
+	if (mType == KeyType.ACTION || mType == KeyType.INPUT_METHOD || mType == KeyType.DELETE || mType == KeyType.SHIFT) {
+	    mStates[1] = 0;
+	} else {
+	    mStates[0] = 0;
+	}
+    }
+    
     public String toString() {
 	StringBuffer sb = new StringBuffer();
 	sb.append('[');

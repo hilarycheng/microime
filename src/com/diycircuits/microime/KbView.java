@@ -13,7 +13,10 @@ import android.view.Display;
 import android.view.WindowManager;
 import android.view.MotionEvent;
 import android.util.Log;
+import android.util.SparseArray;
 import android.graphics.Typeface;
+import java.util.ArrayList;
+import android.graphics.Rect;
 
 public class KbView extends View {
 
@@ -24,6 +27,8 @@ public class KbView extends View {
     private int mNumCols = 10;
     private Typeface tf = Typeface.create("Droid Sans",Typeface.BOLD);
     private KeyListener mListener = null;
+    private ArrayList<Key> mPressedKey = new ArrayList<Key>();
+    private Rect mDirtyBound = new Rect();
 
     public KbView(Context context, AttributeSet attrs) {
     	super(context, attrs);
@@ -50,7 +55,6 @@ public class KbView extends View {
     public boolean onTouchEvent(MotionEvent event) {
 	super.onTouchEvent(event);
 
-	// Log.i("MicroIME", "OnTouchEvent " + event);
 	final Keyboard keyboard = KeyboardState.getInstance().getCurrentKeyboard();
 	for (int row = 0; row < keyboard.getRow(); row++) {
 	    boolean inter = keyboard.getRow(row).mBounds.contains((int) event.getX(), (int) event.getY());
@@ -60,12 +64,32 @@ public class KbView extends View {
 		final Key key = keyRow.getKey(col);
 		inter = key.mBounds.contains((int) event.getX(), (int) event.getY());
 		if (!inter) continue;
-		// Log.i("MicroIME", "OnTouchEvent " + event + " " + row + " " + col + " " + inter + " " + key.mKey[0]);
-		if (event.getAction() == MotionEvent.ACTION_UP && mListener != null) {
+		if (event.getAction() == MotionEvent.ACTION_DOWN) {
+		    mPressedKey.add(key);
+		    key.setPressed();
+		    invalidate(key.mBounds);
+		} else if (event.getAction() == MotionEvent.ACTION_UP && mListener != null) {
+		    key.setRelease();
+		    mDirtyBound.set(key.mBounds);
+		    for (int i = 0; i < mPressedKey.size(); i++) {
+			mDirtyBound.union(mPressedKey.get(i).mBounds);
+			mPressedKey.get(i).setRelease();
+		    }
+		    invalidate(mDirtyBound);
 		    mListener.keyPressed(key.mKey[0], key.mType);
 		}
 		return true;
 	    }
+	}
+
+	if (event.getAction() == MotionEvent.ACTION_UP) {
+	    for (int i = 0; i < mPressedKey.size(); i++) {
+		if (i == 0) 
+		    mDirtyBound.set(mPressedKey.get(i).mBounds);
+		else mDirtyBound.union(mPressedKey.get(i).mBounds);
+		mPressedKey.get(i).setRelease();
+	    }
+	    invalidate(mDirtyBound);
 	}
 	
 	return false;
