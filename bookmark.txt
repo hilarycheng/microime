@@ -1,0 +1,5 @@
+-- Horizontal Pager
+
+https://github.com/ysamlan/horizontalpager
+
+http://android-developers.blogspot.hk/2011/08/horizontal-view-swiping-with-viewpager.html?utm_source=feedburner&utm_medium=feed&utm_campaign=Feed:+blogspot/hsDu+(Android+Developers+Blog)
