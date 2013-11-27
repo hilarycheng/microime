@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<keyboard name="QWERTY">
+  <row size="25%">
+    <keys size="10%" value="~`|&#x2022;&#x221A;&#x03C0;&#x00F7;&#x00D7;{}" />
+  </row>
+  <row size="25%">
+    <key size="10%" type="tab" />
+    <keys size="10%" value="&#163;&#162;&#8364;&#x00B0;^_=[]" />
+  </row>
+  <row size="25%">
+    <key size="15%" type="shift" />
+    <keys size="10%" value="&#x2122;&#x00AE;&#x00A9;&#x00B6;\\&lt;&gt;" />
+    <key size="15%" type="delete" />
+  </row>
+  <row size="25%">
+    <key size="15%" type="inputmethod" />
+    <key size="10%" type="comma" />
+    <key size="50%" type="space" />
+    <key size="10%" type="dot" />
+    <key size="15%" type="action" />
+  </row>
+</keyboard>

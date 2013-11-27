@@ -7,7 +7,7 @@ public class KeyboardState {
 
     private final static KeyboardState mInstance = new KeyboardState();
 
-    private int mId = R.xml.qwerty;
+    private int mId = R.xml.moresymbol;
     
     private KeyboardState() {
     }

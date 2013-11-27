@@ -22,6 +22,7 @@ public enum KeyType {
 
     DOT,
 
-    ACTION
+    ACTION,
 
+    TAB
 }

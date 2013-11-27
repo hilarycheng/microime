@@ -39,6 +39,8 @@ public class KeyRow {
 	    key.mType = KeyType.ENTER;
 	} else if (type.compareTo("delete") == 0) {
 	    key.mType = KeyType.DELETE;
+	} else if (type.compareTo("tab") == 0) {
+	    key.mType = KeyType.TAB;
 	} else if (type.compareTo("inputmethod") == 0) {
 	    key.mType = KeyType.INPUT_METHOD;
 	    key.mKey[0] = '?';

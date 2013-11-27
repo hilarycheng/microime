@@ -60,10 +60,13 @@ public class SystemParams {
 	    mKeyIcon.put(KeyType.SHIFT.ordinal(), context.getResources().getDrawable(R.drawable.sym_keyboard_shift_holo));
 	    mKeyIcon.put(KeyType.ACTION.ordinal(), context.getResources().getDrawable(R.drawable.sym_keyboard_return_holo));
 	    mKeyIcon.put(KeyType.SPACE.ordinal(), context.getResources().getDrawable(R.drawable.sym_keyboard_space_holo));
+	    mKeyIcon.put(KeyType.TAB.ordinal(), context.getResources().getDrawable(R.drawable.sym_keyboard_tab_holo));
 	    
 	    loadKeyboardXml(context, R.xml.qwerty);
 	    loadKeyboardXml(context, R.xml.cangjie);
 	    loadKeyboardXml(context, R.xml.stroke);
+	    loadKeyboardXml(context, R.xml.symbol);
+	    loadKeyboardXml(context, R.xml.moresymbol);
 
 	    for (int i = 0; i < mKeyboard.size(); i++) {
 		Keyboard keyboard = mKeyboard.get(mKeyboard.keyAt(i));
@@ -107,7 +110,7 @@ public class SystemParams {
 
 		if (key.mType == KeyType.ACTION) {
 		    key.mStates[0] = android.R.attr.state_active;
-		} else if (key.mType == KeyType.INPUT_METHOD || key.mType == KeyType.DELETE || key.mType == KeyType.SHIFT) {
+		} else if (key.mType == KeyType.INPUT_METHOD || key.mType == KeyType.DELETE || key.mType == KeyType.SHIFT || key.mType == KeyType.TAB) {
 		    key.mStates[0] = android.R.attr.state_single;
 		} else {
 		    key.mStates[0] = 0;
