@@ -8,8 +8,8 @@ import android.content.res.XmlResourceParser;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Set;
+import android.util.SparseArray;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.Paint;
@@ -21,8 +21,8 @@ public class SystemParams {
     private int mKbWidth  = 0;
     private int mKbHeight = 0;
     private boolean mKeyboardLoaded = false;
-    private HashMap<String, Keyboard> mKeyboard = new HashMap<String, Keyboard>();
-    private HashMap<KeyType, Drawable> mKeyIcon = new HashMap<KeyType, Drawable>();
+    private SparseArray<Keyboard> mKeyboard = new SparseArray<Keyboard>();
+    private SparseArray<Drawable> mKeyIcon = new SparseArray<Drawable>();
     private Typeface tf = Typeface.create("Droid Sans",Typeface.BOLD);
     private Paint mPaint;
     private FontMetricsInt mFmi;
@@ -39,8 +39,8 @@ public class SystemParams {
     }
 
     public Drawable getIcon(KeyType type) {
-	if (!mKeyIcon.containsKey(type)) return null;
-	return mKeyIcon.get(type);
+	if (mKeyIcon.keyAt(type.ordinal()) < 0) return null;
+	return mKeyIcon.get(type.ordinal());
     }
     
     public void configurationChanged(Configuration newConfig, Context context) {
@@ -56,19 +56,18 @@ public class SystemParams {
 	if (!mKeyboardLoaded) {
 	    mKeyboardLoaded = true;
 
-	    mKeyIcon.put(KeyType.DELETE, context.getResources().getDrawable(R.drawable.sym_keyboard_delete_holo));
-	    mKeyIcon.put(KeyType.SHIFT, context.getResources().getDrawable(R.drawable.sym_keyboard_shift_holo));
-	    mKeyIcon.put(KeyType.ACTION, context.getResources().getDrawable(R.drawable.sym_keyboard_return_holo));
-	    mKeyIcon.put(KeyType.SPACE, context.getResources().getDrawable(R.drawable.sym_keyboard_space_holo));
+	    mKeyIcon.put(KeyType.DELETE.ordinal(), context.getResources().getDrawable(R.drawable.sym_keyboard_delete_holo));
+	    mKeyIcon.put(KeyType.SHIFT.ordinal(), context.getResources().getDrawable(R.drawable.sym_keyboard_shift_holo));
+	    mKeyIcon.put(KeyType.ACTION.ordinal(), context.getResources().getDrawable(R.drawable.sym_keyboard_return_holo));
+	    mKeyIcon.put(KeyType.SPACE.ordinal(), context.getResources().getDrawable(R.drawable.sym_keyboard_space_holo));
 	    
 	    loadKeyboardXml(context, R.xml.qwerty);
 	    loadKeyboardXml(context, R.xml.cangjie);
 	    loadKeyboardXml(context, R.xml.stroke);
 
-	    Set<String> keys = mKeyboard.keySet();
-	    for (String key: keys) {
-		Keyboard keyboard = mKeyboard.get(key);
-		calculateKeyboard(keyboard);
+	    for (int i = 0; i < mKeyboard.size(); i++) {
+		Keyboard keyboard = mKeyboard.get(mKeyboard.keyAt(i));
+	     	calculateKeyboard(keyboard);
 	    }
 	}
     }
@@ -84,7 +83,6 @@ public class SystemParams {
 	int states[] = new int[1];
 	int normal_states[] = new int[0];
 	
-	// for (float y = keyYStart; y < mKbHeight; y += keyHeight) {
 	for (float y = 0; y < mKbHeight;) {
 	    if (rowNum >= keyboard.getRow()) continue;
 	    final KeyRow row = keyboard.getRow(rowNum);
@@ -185,7 +183,7 @@ public class SystemParams {
 	    }
 	    if (row != null) keyboard.addRow(row);
 
-	    mKeyboard.put(name, keyboard);
+	    mKeyboard.append(id, keyboard);
 
 	} catch (org.xmlpull.v1.XmlPullParserException ex) {
 	    Log.i("MicroIME", "LoadKeyboardXml", ex);
@@ -216,11 +214,11 @@ public class SystemParams {
 	return defValue;
     }
 
-    public Keyboard getKeyboard(String name) {
-	if (!mKeyboard.containsKey(name))
+    public Keyboard getKeyboard(int id) {
+	if (mKeyboard.indexOfKey(id) < 0)
 	    return null;
 
-	return mKeyboard.get(name);
+	return mKeyboard.get(id);
     }
     
     public int getWidth() {

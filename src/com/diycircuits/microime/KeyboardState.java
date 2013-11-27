@@ -7,7 +7,7 @@ public class KeyboardState {
 
     private final static KeyboardState mInstance = new KeyboardState();
 
-    private String mCurrent = "CANGJIE";
+    private int mId = R.xml.qwerty;
     
     private KeyboardState() {
     }
@@ -17,7 +17,7 @@ public class KeyboardState {
     }
 
     public Keyboard getCurrentKeyboard() {
-	return SystemParams.getInstance().getKeyboard(mCurrent);
+	return SystemParams.getInstance().getKeyboard(mId);
     }
     
 }
