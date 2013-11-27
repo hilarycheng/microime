@@ -9,6 +9,8 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodSubtype;
 import android.view.inputmethod.CompletionInfo;
 import android.util.Log;
+import android.content.pm.ApplicationInfo;
+import java.io.UnsupportedEncodingException;
 
 public class MicroIME extends InputMethodService implements KeyListener {
 
@@ -21,6 +23,15 @@ public class MicroIME extends InputMethodService implements KeyListener {
     public void onCreate() {
     	super.onCreate();
     	
+	ApplicationInfo appInfo = getApplicationInfo();
+	try {
+	    TableLoader.mInstance.setPath(appInfo.dataDir.getBytes("UTF-8"));
+	} catch (UnsupportedEncodingException ex) {
+	}
+	TableLoader.mInstance.initialize();
+	TableLoader.mInstance.setInputMethod('2');
+	TableLoader.mInstance.enableHongKongChar(true);
+
     	Configuration c = this.getResources().getConfiguration();
     	SystemParams.getInstance().configurationChanged(c, this);
     }
