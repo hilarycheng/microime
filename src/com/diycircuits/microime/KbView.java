@@ -10,8 +10,12 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.FontMetricsInt;
 import android.widget.PopupWindow;
+import android.widget.TextView;
+import android.widget.HorizontalScrollView;
+import android.widget.LinearLayout;
 import android.view.Display;
 import android.view.WindowManager;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.util.Log;
 import android.util.SparseArray;
@@ -32,8 +36,9 @@ public class KbView extends View {
     private KeyListener mListener = null;
     private ArrayList<Key> mPressedKey = new ArrayList<Key>();
     private Rect mDirtyBound = new Rect();
-    private PopupWindow mPopup = new PopupWindow();
+    private PopupWindow mPopup = null;
     private final Context mContext;
+    private int originalScrollX;
 
     public KbView(Context context, AttributeSet attrs) {
     	super(context, attrs);
@@ -56,6 +61,17 @@ public class KbView extends View {
     	final int mKbWidth  = SystemParams.getInstance().getWidth();
     	final int mKbHeight = SystemParams.getInstance().getHeight();
         setMeasuredDimension(mKbWidth, mKbHeight);
+    }
+
+    private void addInputMethod(PopupWindow popup, String s) {
+	LinearLayout view = (LinearLayout) popup.getContentView().findViewById(R.id.inputMethodView);
+	TextView text = new TextView(view.getContext());
+	text.setText(s);
+	text.setTextColor(Color.WHITE);
+	text.setWidth(200);
+	text.setHeight(100);
+	text.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+	view.addView(text);
     }
 
     @Override
@@ -82,10 +98,23 @@ public class KbView extends View {
 			    mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			mPopup = new PopupWindow();
 			mPopup.setContentView(inflate.inflate(R.layout.inputmethod, null));
-			mPopup.setWidth(100);
+			mPopup.setWidth(200);
 			mPopup.setHeight(100);
+			mPopup.setBackgroundDrawable(getResources().getDrawable(R.drawable.kb_view_bg));
+			addInputMethod(mPopup, "English");
+			addInputMethod(mPopup, "Cangjie");
+			addInputMethod(mPopup, "Quick");
+			addInputMethod(mPopup, "Stroke");
+			addInputMethod(mPopup, "Dayi");
 			mPopup.setSoftInputMode(PopupWindow.INPUT_METHOD_NOT_NEEDED);
-			mPopup.showAtLocation((View) this, Gravity.NO_GRAVITY, (int) (key.mBounds.right - key.mBounds.left - 100) / 2 + key.mBounds.left, (int) key.mBounds.top - 100);
+			mPopup.showAtLocation((View) this, Gravity.NO_GRAVITY, (int) (key.mBounds.right - key.mBounds.left - 200) / 2 + key.mBounds.left, (int) key.mBounds.top - 100);
+			originalScrollX = (int) event.getX();
+		    }
+		} else if (event.getAction() == MotionEvent.ACTION_MOVE && mListener != null) {
+		    if (mPopup != null) {
+			HorizontalScrollView view = (HorizontalScrollView) mPopup.getContentView().findViewById(R.id.horizontal);
+			view.smoothScrollBy(((int) event.getX() - originalScrollX) * 2, 0);
+			originalScrollX = (int) event.getX();
 		    }
 		} else if (event.getAction() == MotionEvent.ACTION_UP && mListener != null) {
 		    if (mPopup != null) {
