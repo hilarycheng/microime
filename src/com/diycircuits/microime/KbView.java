@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.view.Display;
 import android.view.WindowManager;
 import android.view.Gravity;
+import android.view.ViewTreeObserver;
 import android.view.MotionEvent;
 import android.util.Log;
 import android.util.SparseArray;
@@ -38,7 +39,7 @@ public class KbView extends View {
     private Rect mDirtyBound = new Rect();
     private PopupWindow mPopup = null;
     private final Context mContext;
-    private int originalScrollX, mPopupWidth, mPopupHeight, mPopupScroll;
+    private int originalScrollX, mPopupWidth, mPopupHeight, mPopupScroll, mPopupTotalScroll = 0;
 
     public KbView(Context context, AttributeSet attrs) {
     	super(context, attrs);
@@ -78,7 +79,7 @@ public class KbView extends View {
     public boolean onTouchEvent(MotionEvent event) {
 	super.onTouchEvent(event);
 
-	Log.i("MicroIME", "TouchEvent " + event);
+	// Log.i("MicroIME", "TouchEvent " + event);
 	final Keyboard keyboard = KeyboardState.getInstance().getCurrentKeyboard();
 	for (int row = 0; row < keyboard.getRow(); row++) {
 	    boolean inter = keyboard.getRow(row).mBounds.contains((int) event.getX(), (int) event.getY());
@@ -96,7 +97,7 @@ public class KbView extends View {
 			mPopupWidth = key.mBounds.width();
 			mPopupHeight = key.mBounds.height();
 			mPopupScroll = key.mBounds.width() / 3;
-			Log.i("MicroIME", "Key Type Popup");
+			// Log.i("MicroIME", "Key Type Popup");
 			LayoutInflater inflate = (LayoutInflater)
 			    mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			mPopup = new PopupWindow();
@@ -108,27 +109,38 @@ public class KbView extends View {
 			addInputMethod(mPopup, mContext.getString(R.string.cangjie));
 			addInputMethod(mPopup, mContext.getString(R.string.quick));
 			addInputMethod(mPopup, mContext.getString(R.string.stroke));
-			addInputMethod(mPopup, mContext.getString(R.string.dayi));
-			addInputMethod(mPopup, mContext.getString(R.string.symbol));
-			addInputMethod(mPopup, mContext.getString(R.string.moresymbol));
+			// addInputMethod(mPopup, mContext.getString(R.string.dayi));
 			((HorizontalScrollView) mPopup.getContentView().findViewById(R.id.horizontal)).setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
 			mPopup.setSoftInputMode(PopupWindow.INPUT_METHOD_NOT_NEEDED);
 			mPopup.showAtLocation((View) this, Gravity.NO_GRAVITY,
 					      (int) (key.mBounds.right - key.mBounds.left - mPopupWidth) / 2 + key.mBounds.left,
 					      (int) key.mBounds.top - mPopupHeight);
 			originalScrollX = (int) event.getX();
+			final HorizontalScrollView view = (HorizontalScrollView) mPopup.getContentView().findViewById(R.id.horizontal);
+
+			view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
+				@Override
+				public void onGlobalLayout(){
+				    view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+				    view.scrollTo(KeyboardState.getInstance().getKeyboardIndex() * mPopupWidth, 0);
+				}
+			    });
+			mPopupTotalScroll = KeyboardState.getInstance().getKeyboardIndex() * mPopupWidth;
 		    }
 		} else if (event.getAction() == MotionEvent.ACTION_MOVE && mListener != null) {
 		    if (mPopup != null) {
-			HorizontalScrollView view = (HorizontalScrollView) mPopup.getContentView().findViewById(R.id.horizontal);
+			final HorizontalScrollView view = (HorizontalScrollView) mPopup.getContentView().findViewById(R.id.horizontal);
+			mPopupTotalScroll += ((int) event.getX() - originalScrollX) * 4;
+			if (mPopupTotalScroll < 0) mPopupTotalScroll = 0;
 			view.smoothScrollBy(((int) event.getX() - originalScrollX) * 4, 0);
-			// view.smoothScrollBy(mPopupScroll, 0);
 			originalScrollX = (int) event.getX();
 		    }
 		} else if (event.getAction() == MotionEvent.ACTION_UP && mListener != null) {
 		    if (mPopup != null) {
+			KeyboardState.getInstance().setKeyboardIndex((mPopupTotalScroll + mPopupWidth / 2) / mPopupWidth);
 			mPopup.dismiss();
 			mPopup = null;
+			invalidate();
 		    }
 		    key.setRelease();
 		    mDirtyBound.set(key.mBounds);

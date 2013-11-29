@@ -64,6 +64,7 @@ public class SystemParams {
 	    
 	    loadKeyboardXml(context, R.xml.qwerty);
 	    loadKeyboardXml(context, R.xml.cangjie);
+	    loadKeyboardXml(context, R.xml.quick);
 	    loadKeyboardXml(context, R.xml.stroke);
 	    loadKeyboardXml(context, R.xml.symbol);
 	    loadKeyboardXml(context, R.xml.moresymbol);
