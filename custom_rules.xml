@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="custom_rules">
+  <!--
   <target name="-package-resources" depends="-crunch">
     <do-only-if-not-library elseText="Library project: do not package resources..." >
       <aapt executable="${aapt}"
@@ -27,4 +28,5 @@
       </aapt>
     </do-only-if-not-library>
   </target>
+  -->
 </project>
