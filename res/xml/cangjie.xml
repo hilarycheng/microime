@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<keyboard name="CANGJIE">
+<keyboard name="@string/cangjie">
   <!--
   <row type="numrow">
     <keys size="10%" value="1234567890" />

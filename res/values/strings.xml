@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MicroIME</string>
+    <string name="qwerty">英文</string>
+    <string name="cangjie">倉頡</string>
+    <string name="quick">速成</string>
+    <string name="stroke">筆劃</string>
+    <string name="dayi">大易</string>
+    <string name="symbol">符號1</string>
+    <string name="moresymbol">符號2</string>
 </resources>

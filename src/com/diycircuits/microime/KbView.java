@@ -104,11 +104,13 @@ public class KbView extends View {
 			mPopup.setWidth(mPopupWidth);
 			mPopup.setHeight(mPopupHeight);
 			mPopup.setBackgroundDrawable(getResources().getDrawable(R.drawable.kb_view_bg));
-			addInputMethod(mPopup, "English");
-			addInputMethod(mPopup, "Cangjie");
-			addInputMethod(mPopup, "Quick");
-			addInputMethod(mPopup, "Stroke");
-			addInputMethod(mPopup, "Dayi");
+			addInputMethod(mPopup, mContext.getString(R.string.qwerty));
+			addInputMethod(mPopup, mContext.getString(R.string.cangjie));
+			addInputMethod(mPopup, mContext.getString(R.string.quick));
+			addInputMethod(mPopup, mContext.getString(R.string.stroke));
+			addInputMethod(mPopup, mContext.getString(R.string.dayi));
+			addInputMethod(mPopup, mContext.getString(R.string.symbol));
+			addInputMethod(mPopup, mContext.getString(R.string.moresymbol));
 			((HorizontalScrollView) mPopup.getContentView().findViewById(R.id.horizontal)).setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
 			mPopup.setSoftInputMode(PopupWindow.INPUT_METHOD_NOT_NEEDED);
 			mPopup.showAtLocation((View) this, Gravity.NO_GRAVITY,
