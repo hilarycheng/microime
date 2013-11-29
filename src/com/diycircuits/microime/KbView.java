@@ -38,7 +38,7 @@ public class KbView extends View {
     private Rect mDirtyBound = new Rect();
     private PopupWindow mPopup = null;
     private final Context mContext;
-    private int originalScrollX;
+    private int originalScrollX, mPopupWidth, mPopupHeight, mPopupScroll;
 
     public KbView(Context context, AttributeSet attrs) {
     	super(context, attrs);
@@ -68,8 +68,8 @@ public class KbView extends View {
 	TextView text = new TextView(view.getContext());
 	text.setText(s);
 	text.setTextColor(Color.WHITE);
-	text.setWidth(200);
-	text.setHeight(100);
+	text.setWidth(mPopupWidth);
+	text.setHeight(mPopupHeight);
 	text.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
 	view.addView(text);
     }
@@ -93,27 +93,34 @@ public class KbView extends View {
 		    key.setPressed();
 		    invalidate(key.mBounds);
 		    if (key.mType == KeyType.SPACE) {
+			mPopupWidth = key.mBounds.width();
+			mPopupHeight = key.mBounds.height();
+			mPopupScroll = key.mBounds.width() / 3;
 			Log.i("MicroIME", "Key Type Popup");
 			LayoutInflater inflate = (LayoutInflater)
 			    mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			mPopup = new PopupWindow();
 			mPopup.setContentView(inflate.inflate(R.layout.inputmethod, null));
-			mPopup.setWidth(200);
-			mPopup.setHeight(100);
+			mPopup.setWidth(mPopupWidth);
+			mPopup.setHeight(mPopupHeight);
 			mPopup.setBackgroundDrawable(getResources().getDrawable(R.drawable.kb_view_bg));
 			addInputMethod(mPopup, "English");
 			addInputMethod(mPopup, "Cangjie");
 			addInputMethod(mPopup, "Quick");
 			addInputMethod(mPopup, "Stroke");
 			addInputMethod(mPopup, "Dayi");
+			((HorizontalScrollView) mPopup.getContentView().findViewById(R.id.horizontal)).setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
 			mPopup.setSoftInputMode(PopupWindow.INPUT_METHOD_NOT_NEEDED);
-			mPopup.showAtLocation((View) this, Gravity.NO_GRAVITY, (int) (key.mBounds.right - key.mBounds.left - 200) / 2 + key.mBounds.left, (int) key.mBounds.top - 100);
+			mPopup.showAtLocation((View) this, Gravity.NO_GRAVITY,
+					      (int) (key.mBounds.right - key.mBounds.left - mPopupWidth) / 2 + key.mBounds.left,
+					      (int) key.mBounds.top - mPopupHeight);
 			originalScrollX = (int) event.getX();
 		    }
 		} else if (event.getAction() == MotionEvent.ACTION_MOVE && mListener != null) {
 		    if (mPopup != null) {
 			HorizontalScrollView view = (HorizontalScrollView) mPopup.getContentView().findViewById(R.id.horizontal);
-			view.smoothScrollBy(((int) event.getX() - originalScrollX) * 2, 0);
+			view.smoothScrollBy(((int) event.getX() - originalScrollX) * 4, 0);
+			// view.smoothScrollBy(mPopupScroll, 0);
 			originalScrollX = (int) event.getX();
 		    }
 		} else if (event.getAction() == MotionEvent.ACTION_UP && mListener != null) {
