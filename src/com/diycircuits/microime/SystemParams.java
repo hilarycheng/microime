@@ -9,7 +9,9 @@ import android.graphics.drawable.Drawable;
 import android.util.Log;
 import java.util.ArrayList;
 import java.util.Set;
+
 import android.util.SparseArray;
+import android.util.TypedValue;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.Paint;
@@ -26,6 +28,7 @@ public class SystemParams {
     private Typeface tf = Typeface.create("Droid Sans",Typeface.BOLD);
     private Paint mPaint;
     private FontMetricsInt mFmi;
+    private Rect mTextBounds = new Rect();
 
     private SystemParams() {
         mPaint = new Paint();
@@ -43,7 +46,7 @@ public class SystemParams {
 	return mKeyIcon.get(type.ordinal());
     }
     
-    public void configurationChanged(Configuration newConfig, Context context) {
+    public void configurationChanged(Configuration newConfig, final Context context) {
     	WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
     	Display d = wm.getDefaultDisplay();
 
@@ -71,12 +74,12 @@ public class SystemParams {
 
 	    for (int i = 0; i < mKeyboard.size(); i++) {
 		Keyboard keyboard = mKeyboard.get(mKeyboard.keyAt(i));
-	     	calculateKeyboard(keyboard);
+	     	calculateKeyboard(keyboard, context);
 	    }
 	}
     }
 
-    private void calculateKeyboard(Keyboard keyboard) {
+    private void calculateKeyboard(Keyboard keyboard, final Context context) {
 	float keyHeight = (float) mKbHeight / (float) keyboard.getRow();
     	float keyYMargin = (float) (keyHeight * 0.05);
     	float keyYStart = 0;
@@ -122,18 +125,24 @@ public class SystemParams {
 		    key.mType == KeyType.INPUT_METHOD ||
 		    key.mType == KeyType.COMMA) {
 
-		    key.mFontSize = 56;
+		    // key.mFontSize = context.getResources().getDimensionPixelSize(R.dimen.textSize);
+		    key.mFontSize = (int) (keyHeight * 0.40);
 		    if (key.mType == KeyType.INPUT_METHOD) {
-			key.mFontSize = 48;
+			// key.mFontSize = context.getResources().getDimensionPixelSize(R.dimen.textSizeSymbol);
+			key.mFontSize = (int) (keyHeight * 0.30);
 		    }
 		    mPaint.setTextSize(key.mFontSize);
-		    float mx = x + (keyWidth - mPaint.measureText(key.mKey, 0, key.mKeyLen)) / 2.0f;
-		    int fontHeight = mFmi.bottom - mFmi.top;
-		    float my = (keyHeight - fontHeight) / 2.0f;
-		    my = y + keyYMargin + my - mFmi.top + mFmi.bottom / 1.5f;
+		    mPaint.getTextBounds(key.mKey, 0, key.mKeyLen, mTextBounds);
+		    final float textWidth = mTextBounds.width();
+		    final float textHeight = mTextBounds.height();
+
+		    float mx = x + keyWidth / 2;
+		    // float my = (keyHeight - textWidth) / 2.0f;
+		    // my = y + keyYMargin + my - mFmi.top + mFmi.bottom / 1.5f;
+		    float my = y + (keyHeight / 2) + textHeight / 2;
 
 		    key.mMainX = mx;
-		    key.mMainY = my + 1;
+		    key.mMainY = my;
 		} else {
 		    final Drawable icon = getIcon(key.mType);
 		    if (icon != null) {

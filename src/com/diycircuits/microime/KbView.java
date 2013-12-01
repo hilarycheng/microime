@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import android.graphics.Rect;
 import android.view.LayoutInflater;
 import android.view.Gravity;
+import android.util.TypedValue;
 
 public class KbView extends View {
 
@@ -40,6 +41,7 @@ public class KbView extends View {
     private PopupWindow mPopup = null;
     private final Context mContext;
     private int originalScrollX, mPopupWidth, mPopupHeight, mPopupScroll, mPopupTotalScroll = 0;
+    private SlidingLocaleDrawable mSliding = null;
 
     public KbView(Context context, AttributeSet attrs) {
     	super(context, attrs);
@@ -51,6 +53,7 @@ public class KbView extends View {
         mPaint.setAntiAlias(true);
 	mPaint.setTypeface(tf);
         mFmi = mPaint.getFontMetricsInt();
+
     }
 
     public void setKeyListener(KeyListener listen) {
@@ -97,6 +100,31 @@ public class KbView extends View {
 			mPopupWidth = key.mBounds.width();
 			mPopupHeight = key.mBounds.height();
 			mPopupScroll = key.mBounds.width() / 3;
+			if (mSliding == null) {
+			    mSliding = new SlidingLocaleDrawable(mContext, mContext.getResources(),
+								 mContext.getResources().getDrawable(R.drawable.sym_keyboard_space_holo),
+								 mPopupWidth, mPopupHeight);
+			}
+			LayoutInflater inflate = (LayoutInflater)
+			    mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			TextView textView = (TextView) inflate.inflate(R.layout.key_preview, null);
+			mPopup = new PopupWindow();
+			mPopup.setContentView(textView);
+			mPopup.setWidth(mPopupWidth);
+			mPopup.setHeight(mPopupHeight);
+			mPopup.setBackgroundDrawable(getResources().getDrawable(R.drawable.kb_view_bg));
+			textView.setCompoundDrawables(null, null, null, mSliding);
+			textView.setText(null);
+			textView.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
+					 MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+			textView.setVisibility(VISIBLE);
+			mSliding.setBounds(0, 0, mPopupWidth, mPopupHeight);
+			mSliding.invalidateSelf();
+			mPopup.showAtLocation((View) this, Gravity.NO_GRAVITY,
+					      (int) (key.mBounds.right - key.mBounds.left - mPopupWidth) / 2 + key.mBounds.left,
+					      (int) key.mBounds.top - mPopupHeight);
+			originalScrollX = (int) event.getX();
+			/*
 			// Log.i("MicroIME", "Key Type Popup");
 			LayoutInflater inflate = (LayoutInflater)
 			    mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -126,18 +154,23 @@ public class KbView extends View {
 				}
 			    });
 			mPopupTotalScroll = KeyboardState.getInstance().getKeyboardIndex() * mPopupWidth;
+			*/
 		    }
 		} else if (event.getAction() == MotionEvent.ACTION_MOVE && mListener != null) {
 		    if (mPopup != null) {
+			mSliding.setDiff(((int) event.getX() - originalScrollX));
+			mSliding.invalidateSelf();
+			// originalScrollX = (int) event.getX();
+			/*
 			final HorizontalScrollView view = (HorizontalScrollView) mPopup.getContentView().findViewById(R.id.horizontal);
 			mPopupTotalScroll += ((int) event.getX() - originalScrollX) * 4;
 			if (mPopupTotalScroll < 0) mPopupTotalScroll = 0;
 			view.smoothScrollBy(((int) event.getX() - originalScrollX) * 4, 0);
-			originalScrollX = (int) event.getX();
+			*/
 		    }
 		} else if (event.getAction() == MotionEvent.ACTION_UP && mListener != null) {
 		    if (mPopup != null) {
-			KeyboardState.getInstance().setKeyboardIndex((mPopupTotalScroll + mPopupWidth / 2) / mPopupWidth);
+			// KeyboardState.getInstance().setKeyboardIndex((mPopupTotalScroll + mPopupWidth / 2) / mPopupWidth);
 			mPopup.dismiss();
 			mPopup = null;
 			invalidate();
@@ -194,6 +227,7 @@ public class KbView extends View {
 
 		    mPaint.setColor(Color.WHITE);
 		    mPaint.setTextSize(key.mFontSize);
+		    mPaint.setTextAlign(Paint.Align.CENTER);
 		    canvas.drawText(key.mKey, 0, key.mKeyLen, key.mMainX, key.mMainY, mPaint);
 		} else {
 		    final Drawable icon = SystemParams.getInstance().getIcon(key.mType);
