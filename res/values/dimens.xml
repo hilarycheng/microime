@@ -2,4 +2,5 @@
 <resources>
   <dimen name="textSize">18sp</dimen>
   <dimen name="textSizeSymbol">14sp</dimen>
+  <dimen name="key_preview_height">80sp</dimen>
 </resources>

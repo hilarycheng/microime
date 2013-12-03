@@ -60,7 +60,8 @@ public class SlidingLocaleDrawable extends Drawable {
     }
 
     private void setDefaultBounds(Drawable drawable) {
-        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+	drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+	// drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), mHeight);
     }
 
     private int getTextSizeFromTheme(int style, int defValue) {
@@ -117,9 +118,14 @@ public class SlidingLocaleDrawable extends Drawable {
 	    canvas.drawText(mNextLanguage, diff - width / 2, baseline, paint);
 	    canvas.drawText(mPrevLanguage, diff + width + width / 2, baseline, paint);
 
-	    setDefaultBounds(lArrow);
-	    rArrow.setBounds(width - rArrow.getIntrinsicWidth(), 0, width,
-			     rArrow.getIntrinsicHeight());
+	    // setDefaultBounds(lArrow);
+	    int offset = (mHeight - lArrow.getIntrinsicHeight()) / 2;
+	    lArrow.setBounds(0, offset,
+			     lArrow.getIntrinsicWidth(),
+			     offset + lArrow.getIntrinsicHeight());
+	    offset = (mHeight - rArrow.getIntrinsicHeight()) / 2;
+	    rArrow.setBounds(width - rArrow.getIntrinsicWidth(), offset, width,
+			     offset + rArrow.getIntrinsicHeight());
 	    lArrow.draw(canvas);
 	    rArrow.draw(canvas);
 	}
