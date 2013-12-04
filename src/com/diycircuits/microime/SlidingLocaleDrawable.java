@@ -12,6 +12,7 @@ import android.view.ViewConfiguration;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.util.Log;
 
 public class SlidingLocaleDrawable extends Drawable {
 
@@ -40,11 +41,12 @@ public class SlidingLocaleDrawable extends Drawable {
 
 	mContext = context;
 	mRes = res;
+
+	mWidth = width;
+	mHeight = height;
 	
 	mBackground = background;
 	setDefaultBounds(mBackground);
-	mWidth = width;
-	mHeight = height;
 	mTextPaint = new TextPaint();
 	mTextPaint.setTextSize(getTextSizeFromTheme(android.R.style.TextAppearance_Medium, 18));
 	mTextPaint.setColor(R.color.latinkeyboard_transparent);
@@ -99,6 +101,7 @@ public class SlidingLocaleDrawable extends Drawable {
 	    final Drawable lArrow = mLeftDrawable;
 	    final Drawable rArrow = mRightDrawable;
 	    canvas.clipRect(0, 0, width, height);
+
 	    // if (mCurrentLanguage == null) {
 	    // 	final LanguageSwitcher languageSwitcher = mLanguageSwitcher;
 	    // 	mCurrentLanguage = getLanguageName(languageSwitcher.getInputLocale());
@@ -113,6 +116,7 @@ public class SlidingLocaleDrawable extends Drawable {
 	    
 	    // Draw language text with shadow
 	    final float baseline = mHeight * SPACEBAR_LANGUAGE_BASELINE - paint.descent();
+
 	    paint.setColor(mRes.getColor(R.color.latinkeyboard_feedback_language_text));
 	    canvas.drawText(mCurrentLanguage, width / 2 + diff, baseline, paint);
 	    canvas.drawText(mNextLanguage, diff - width / 2, baseline, paint);

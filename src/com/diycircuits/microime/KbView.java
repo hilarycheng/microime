@@ -142,9 +142,13 @@ public class KbView extends View {
 			    lp.height = mPopupHeight;
 			}
 			mPreviewText.setVisibility(VISIBLE);
-			mPopup.showAtLocation((View) this, Gravity.NO_GRAVITY,
-					      (int) (key.mBounds.right - key.mBounds.left - mPopupWidth) / 2 + key.mBounds.left,
-					      (int) key.mBounds.top - mPopupHeight);
+
+			int px = (int) (key.mBounds.right - key.mBounds.left - mPopupWidth) / 2 + key.mBounds.left;
+			int py = (int) key.mBounds.top - mPopupHeight;
+
+			Log.i("MicroIME", "Popup Location " + px + " " + py);
+			
+			mPopup.showAtLocation((View) this, Gravity.NO_GRAVITY, px, py);
 			// (int) key.mBounds.top - mPopupHeight);
 			originalScrollX = (int) event.getX();
 			/*
