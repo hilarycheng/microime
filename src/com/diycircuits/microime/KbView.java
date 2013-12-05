@@ -63,6 +63,8 @@ public class KbView extends View {
 	    mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	mPreviewText = (TextView) inflate.inflate(R.layout.key_preview, null);
 	mPopup.setContentView(mPreviewText);
+	mPreviewText.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
+			     MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
 	mPopup.setBackgroundDrawable(null);
         mPopup.setTouchable(false);
 	mSpacePreviewIcon = context.getResources().getDrawable(R.drawable.sym_keyboard_feedback_space);
@@ -122,12 +124,15 @@ public class KbView extends View {
 								 mSpacePreviewIcon,
 								 mPopupWidth, mPopupHeight);
 			}
-			mPreviewText.setCompoundDrawables(null, null, null, mSliding);
-			mPreviewText.setText(null);
+			mPopup.setContentView(mPreviewText);
+			// mPreviewText.setCompoundDrawables(null, null, null, mSliding);
 			mPreviewText.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
 					 MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+			// mPreviewText.setCompoundDrawables(null, null, null, mSliding);
 			mSliding.setBounds(0, 0, mPopupWidth, mPopupHeight);
+			// mPreviewText.setCompoundDrawables(null, null, null, mSliding);
 			mSliding.invalidateSelf();
+			mPreviewText.setCompoundDrawables(null, null, null, mSliding);
 			
 			mPopupHeight =  mContext.getResources().getDimensionPixelSize(R.dimen.key_preview_height);
 			// mPopupHeight = 200;
