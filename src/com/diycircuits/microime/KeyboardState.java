@@ -38,6 +38,33 @@ public class KeyboardState {
 	    break;
 	}
     }
+
+    public int getCurrentInputMethod() {
+	if (mIndex == 0) {
+	    return R.string.qwerty;
+	} else if (mIndex == 1) {
+	    return R.string.cangjie;
+	}
+	return R.string.qwerty;
+    }
+    
+    public int getNextInputMethod() {
+	if (mIndex == 0) {
+	    return R.string.cangjie;
+	} else if (mIndex == 1) {
+	    return R.string.qwerty;
+	}
+	return R.string.cangjie;
+    }
+    
+    public int getPreviousInputMethod() {
+	if (mIndex == 0) {
+	    return R.string.cangjie;
+	} else if (mIndex == 1) {
+	    return R.string.qwerty;
+	}
+	return R.string.cangjie;
+    }
     
     public static KeyboardState getInstance() {
 	return mInstance;

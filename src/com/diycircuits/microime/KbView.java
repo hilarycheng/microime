@@ -45,6 +45,7 @@ public class KbView extends View {
     private final Context mContext;
     private int originalScrollX, mPopupWidth, mPopupHeight, mPopupScroll, mPopupTotalScroll = 0;
     private int mSpacePreviewIconHeight = 0;
+    private int mSpaceKeyWidth = 0;
     private SlidingLocaleDrawable mSliding = null;
 
     public KbView(Context context, AttributeSet attrs) {
@@ -144,6 +145,7 @@ public class KbView extends View {
 
 			mPopup.showAtLocation((View) this, Gravity.NO_GRAVITY, px, py);
 			originalScrollX = (int) event.getX();
+			mSpaceKeyWidth = mPopupWidth;
 		    }
 		} else if (event.getAction() == MotionEvent.ACTION_MOVE && mListener != null) {
 		    if (mPopup != null) {
@@ -154,6 +156,16 @@ public class KbView extends View {
 		    if (mPopup != null) {
 			mPopup.dismiss();
 			invalidate();
+			if (mSpaceKeyWidth > 0) {
+			    Log.i("MicroIME", "Which Method " + Math.abs(((int) event.getX() - originalScrollX)) + " " + (mSpaceKeyWidth * 0.8));
+			    if ((float) Math.abs(((int) event.getX() - originalScrollX)) >= (float) (mSpaceKeyWidth * 0.8)) {
+				if (KeyboardState.getInstance().getKeyboardIndex() == 0)
+				    KeyboardState.getInstance().setKeyboardIndex(1);
+				else if (KeyboardState.getInstance().getKeyboardIndex() == 1)
+				    KeyboardState.getInstance().setKeyboardIndex(0);
+				invalidate();
+			    }
+			}
 		    }
 		    key.setRelease();
 		    mDirtyBound.set(key.mBounds);

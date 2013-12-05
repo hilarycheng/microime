@@ -107,9 +107,10 @@ public class SlidingLocaleDrawable extends Drawable {
 	    // 	mNextLanguage = getLanguageName(languageSwitcher.getNextInputLocale());
 	    // 	mPrevLanguage = getLanguageName(languageSwitcher.getPrevInputLocale());
 	    // }
-	    mCurrentLanguage = mContext.getString(R.string.qwerty);
-	    mNextLanguage    = mContext.getString(R.string.cangjie);
-	    mPrevLanguage    = mContext.getString(R.string.cangjie);
+	    mCurrentLanguage = mContext.getString(KeyboardState.getInstance().getCurrentInputMethod());
+	    mNextLanguage    = mContext.getString(KeyboardState.getInstance().getNextInputMethod());
+	    mPrevLanguage    = mContext.getString(KeyboardState.getInstance().getPreviousInputMethod());
+
 	    // mCurrentLanguage = "English";
 
 	    
