@@ -114,10 +114,6 @@ public class KbView extends View {
 		    if (key.mType == KeyType.SPACE) {
 			mPopupWidth = key.mBounds.width();
 			mPopupHeight = mSpacePreviewIconHeight;
-			// mPopupHeight = mContext.getResources().getDrawable(R.drawable.sym_keyboard_feedback_space).getIntrinsicHeight();
-			// mPopupHeight = key.mBounds.height();
-			// mPopupHeight = 200; // mContext.getResources().getDimensionPixelSize(R.dimen.key_preview_height);
-			Log.i("MicroIME", "PopupHeight " + mPopupHeight + " " + mSpacePreviewIconHeight);
 			mPopupScroll = key.mBounds.width() / 3;
 			if (mSliding == null) {
 			    mSliding = new SlidingLocaleDrawable(mContext, mContext.getResources(),
@@ -125,22 +121,17 @@ public class KbView extends View {
 								 mPopupWidth, mPopupHeight);
 			}
 			mPopup.setContentView(mPreviewText);
-			// mPreviewText.setCompoundDrawables(null, null, null, mSliding);
 			mPreviewText.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
 					 MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-			// mPreviewText.setCompoundDrawables(null, null, null, mSliding);
 			mSliding.setBounds(0, 0, mPopupWidth, mPopupHeight);
-			// mPreviewText.setCompoundDrawables(null, null, null, mSliding);
 			mSliding.invalidateSelf();
 			mPreviewText.setCompoundDrawables(null, null, null, mSliding);
 			
 			mPopupHeight =  mContext.getResources().getDimensionPixelSize(R.dimen.key_preview_height);
-			// mPopupHeight = 200;
 			mPopupWidth = Math.max(mPreviewText.getMeasuredWidth(), key.mBounds.width()
 					       + mPreviewText.getPaddingLeft() + mPreviewText.getPaddingRight());
 			mPopup.setWidth(mPopupWidth);
 			mPopup.setHeight(mPopupHeight);
-			// mPopupHeight = mContext.getResources().getDimensionPixelSize(R.dimen.key_preview_height);
 			LayoutParams lp = mPreviewText.getLayoutParams();
 			if (lp != null) {
 			    lp.width = mPopupWidth;
@@ -151,60 +142,17 @@ public class KbView extends View {
 			int px = (int) (key.mBounds.right - key.mBounds.left - mPopupWidth) / 2 + key.mBounds.left;
 			int py = (int) key.mBounds.top - mPopupHeight;
 
-			Log.i("MicroIME", "Popup Location " + px + " " + py);
-			
 			mPopup.showAtLocation((View) this, Gravity.NO_GRAVITY, px, py);
-			// (int) key.mBounds.top - mPopupHeight);
 			originalScrollX = (int) event.getX();
-			/*
-			// Log.i("MicroIME", "Key Type Popup");
-			LayoutInflater inflate = (LayoutInflater)
-			    mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			mPopup = new PopupWindow();
-			mPopup.setContentView(inflate.inflate(R.layout.inputmethod, null));
-			mPopup.setWidth(mPopupWidth);
-			mPopup.setHeight(mPopupHeight);
-			mPopup.setBackgroundDrawable(getResources().getDrawable(R.drawable.kb_view_bg));
-			addInputMethod(mPopup, mContext.getString(R.string.qwerty));
-			addInputMethod(mPopup, mContext.getString(R.string.cangjie));
-			addInputMethod(mPopup, mContext.getString(R.string.quick));
-			addInputMethod(mPopup, mContext.getString(R.string.stroke));
-			// addInputMethod(mPopup, mContext.getString(R.string.dayi));
-			((HorizontalScrollView) mPopup.getContentView().findViewById(R.id.horizontal)).setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-			mPopup.setSoftInputMode(PopupWindow.INPUT_METHOD_NOT_NEEDED);
-			mPopup.showAtLocation((View) this, Gravity.NO_GRAVITY,
-					      (int) (key.mBounds.right - key.mBounds.left - mPopupWidth) / 2 + key.mBounds.left,
-					      (int) key.mBounds.top - mPopupHeight);
-			originalScrollX = (int) event.getX();
-			final HorizontalScrollView view = (HorizontalScrollView) mPopup.getContentView().findViewById(R.id.horizontal);
-
-			view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
-				@Override
-				public void onGlobalLayout(){
-				    view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-				    view.scrollTo(KeyboardState.getInstance().getKeyboardIndex() * mPopupWidth, 0);
-				}
-			    });
-			mPopupTotalScroll = KeyboardState.getInstance().getKeyboardIndex() * mPopupWidth;
-			*/
 		    }
 		} else if (event.getAction() == MotionEvent.ACTION_MOVE && mListener != null) {
 		    if (mPopup != null) {
 			mSliding.setDiff(((int) event.getX() - originalScrollX));
 			mSliding.invalidateSelf();
-			// originalScrollX = (int) event.getX();
-			/*
-			final HorizontalScrollView view = (HorizontalScrollView) mPopup.getContentView().findViewById(R.id.horizontal);
-			mPopupTotalScroll += ((int) event.getX() - originalScrollX) * 4;
-			if (mPopupTotalScroll < 0) mPopupTotalScroll = 0;
-			view.smoothScrollBy(((int) event.getX() - originalScrollX) * 4, 0);
-			*/
 		    }
 		} else if (event.getAction() == MotionEvent.ACTION_UP && mListener != null) {
 		    if (mPopup != null) {
-			// KeyboardState.getInstance().setKeyboardIndex((mPopupTotalScroll + mPopupWidth / 2) / mPopupWidth);
 			mPopup.dismiss();
-			// mPopup = null;
 			invalidate();
 		    }
 		    key.setRelease();
