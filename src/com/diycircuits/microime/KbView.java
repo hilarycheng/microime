@@ -171,7 +171,6 @@ public class KbView extends View {
 	if (event.getAction() == MotionEvent.ACTION_UP) {
 	    if (mPopup != null) {
 		mPopup.dismiss();
-		mPopup = null;
 	    }
 	    for (int i = 0; i < mPressedKey.size(); i++) {
 		if (i == 0) 
