@@ -22,6 +22,8 @@ public class SystemParams {
     private static SystemParams mInstance = new SystemParams();
     private int mKbWidth  = 0;
     private int mKbHeight = 0;
+    private int mKbCandidateHeight = 0;
+    private int mKbOffset = 0;
     private boolean mKeyboardLoaded = false;
     private SparseArray<Keyboard> mKeyboard = new SparseArray<Keyboard>();
     private SparseArray<Drawable> mKeyIcon = new SparseArray<Drawable>();
@@ -55,6 +57,12 @@ public class SystemParams {
 
     	mKbWidth = screenWidth;
     	mKbHeight = (int) (screenHeight * 0.35);
+    	// mKbHeight = (int) (screenHeight * 0.45);
+
+	mKbOffset = context.getResources().getDimensionPixelSize(R.dimen.suggestions_strip_height);
+	// mKbCandidateHeight = mKbHeight;
+	// mKbHeight = mKbHeight - mKbOffset;
+	mKbCandidateHeight = mKbHeight + mKbOffset;
 
 	if (!mKeyboardLoaded) {
 	    mKeyboardLoaded = true;
@@ -90,7 +98,7 @@ public class SystemParams {
 	int states[] = new int[1];
 	int normal_states[] = new int[0];
 	
-	for (float y = 0; y < mKbHeight;) {
+	for (float y = keyYStart; y < mKbHeight + keyYStart;) {
 	    if (rowNum >= keyboard.getRow()) continue;
 	    final KeyRow row = keyboard.getRow(rowNum);
 
@@ -240,6 +248,14 @@ public class SystemParams {
 
     public int getHeight() {
     	return mKbHeight;
+    }
+
+    public int getHeightWithCandidate() {
+    	return mKbCandidateHeight;
+    }
+
+    public int getKeyboardOffset() {
+	return mKbOffset;
     }
 
 }

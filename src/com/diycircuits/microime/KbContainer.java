@@ -15,7 +15,7 @@ public class KbContainer extends RelativeLayout {
     @Override
     public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     	int mKbWidth  = SystemParams.getInstance().getWidth();
-    	int mKbHeight = SystemParams.getInstance().getHeight();
+    	int mKbHeight = SystemParams.getInstance().getHeightWithCandidate();
 	
         widthMeasureSpec = MeasureSpec.makeMeasureSpec(mKbWidth,
                 MeasureSpec.EXACTLY);

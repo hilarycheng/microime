@@ -19,18 +19,62 @@
   android:layout_width="wrap_content"
   android:layout_height="wrap_content" >
 
+  <!--
   <ViewFlipper
     android:id="@+id/alpha_floatable"
     android:layout_alignParentBottom="true"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
+  -->
+
+  <com.diycircuits.microime.CandidateView
+      android:id="@+id/candidateView"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/suggestions_strip_height"
+      android:layout_margin="0dp" 
+      android:orientation="horizontal" >
+
+    <it.sephiroth.android.library.widget.HorizontalVariableListView
+        android:id="@+id/candidateList"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/suggestions_strip_height"
+	android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_weight="0.53" />
     
-    <com.diycircuits.microime.KbView
+    <ImageButton            
+        android:id="@+id/arrow_left"
+        android:layout_width="48dp"
+        android:layout_height="@dimen/suggestions_strip_height"
+        android:background="@drawable/ab_solid_dark_holo"
+        android:clickable="true"
+        android:src="@drawable/arrow_right" />
+    
+    <com.diycircuits.microime.CandidateSelectWidget
+        android:id="@+id/match_view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/suggestions_strip_height"
+        android:layout_weight="0.53" />
+    
+    <ImageButton            
+        android:id="@+id/arrow_right"
+        android:layout_width="48dp"
+        android:layout_height="@dimen/suggestions_strip_height"
+        android:background="@drawable/ab_solid_dark_holo"
+        android:clickable="true"
+        android:src="@drawable/arrow_right" />
+    
+  </com.diycircuits.microime.CandidateView>
+
+  <com.diycircuits.microime.KbView
       android:id="@+id/kbView"
+      android:layout_below="@+id/candidateView"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content" />
-      
+    
 
+  <!--
   </ViewFlipper>
+  --> 
 
 </com.diycircuits.microime.KbContainer>

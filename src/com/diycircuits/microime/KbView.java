@@ -140,7 +140,7 @@ public class KbView extends View {
 			mPreviewText.setVisibility(VISIBLE);
 
 			int px = (int) (key.mBounds.right - key.mBounds.left - mPopupWidth) / 2 + key.mBounds.left;
-			int py = (int) key.mBounds.top - mPopupHeight;
+			int py = (int) key.mBounds.top - mPopupHeight + SystemParams.getInstance().getKeyboardOffset();
 
 			mPopup.showAtLocation((View) this, Gravity.NO_GRAVITY, px, py);
 			originalScrollX = (int) event.getX();
