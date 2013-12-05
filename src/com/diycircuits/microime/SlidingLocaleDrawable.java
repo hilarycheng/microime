@@ -63,7 +63,6 @@ public class SlidingLocaleDrawable extends Drawable {
 
     private void setDefaultBounds(Drawable drawable) {
 	drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
-	// drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), mHeight);
     }
 
     private int getTextSizeFromTheme(int style, int defValue) {
