@@ -25,11 +25,15 @@ import java.util.ArrayList;
 import android.graphics.Rect;
 import android.view.LayoutInflater;
 import android.view.Gravity;
+import android.os.Handler;
+import android.os.Message;
 import android.util.TypedValue;
 import android.view.ViewGroup.LayoutParams;
 
-public class KbView extends View {
+public class KbView extends View implements Runnable, Handler.Callback {
 
+    private final static int KEY_HOLD_ENOUGH = 1;
+    
     private Drawable mNormal = null;
     private Drawable mSpacePreviewIcon = null;
     private Paint mPaint;
@@ -44,9 +48,10 @@ public class KbView extends View {
     private TextView mPreviewText = null;
     private final Context mContext;
     private int originalScrollX, mPopupWidth, mPopupHeight, mPopupScroll, mPopupTotalScroll = 0;
+    private SlidingLocaleDrawable mSliding = null;
     private int mSpacePreviewIconHeight = 0;
     private int mSpaceKeyWidth = 0;
-    private SlidingLocaleDrawable mSliding = null;
+    private Handler mHandler = new Handler(this);
 
     public KbView(Context context, AttributeSet attrs) {
     	super(context, attrs);
@@ -70,6 +75,8 @@ public class KbView extends View {
         mPopup.setTouchable(false);
 	mSpacePreviewIcon = context.getResources().getDrawable(R.drawable.sym_keyboard_feedback_space);
 	mSpacePreviewIconHeight = mSpacePreviewIcon.getIntrinsicHeight();
+
+	new Thread(this).start();
     }
 
     public void setKeyListener(KeyListener listen) {
@@ -94,6 +101,87 @@ public class KbView extends View {
 	view.addView(text);
     }
 
+    public boolean handleMessage(Message msg) {
+	switch (msg.what) {
+	case KEY_HOLD_ENOUGH:
+	    final Key key = (Key) msg.obj;
+	    if (key.mType == KeyType.SPACE) {
+		handleSpace(key, key.mX);
+	    }
+	    break;
+	default:
+	    break;
+	}
+
+	return true;
+    }
+    
+    public void run() {
+
+	while (true) {
+	    // synchronized(mPressedKey) {
+	    // 	try {
+	    // 	    mPressedKey.wait(200);
+	    // 	} catch (Exception ex) {
+	    // 	}
+	    // }
+	    try {
+		Thread.sleep(500);
+	    } catch (Exception ex) {
+	    }
+	    synchronized(mPressedKey) {
+		for (int count = 0; count < mPressedKey.size(); count++) {
+		    final Key key = mPressedKey.get(count);
+		    if (key.mType == KeyType.SPACE) Log.i("MicroIME", "Key " + key.mPressed + " " + key.getPressedDuration() + " " + key.isHold());
+		    if (key.mPressed && key.isHoldTimeReach() && !key.isHold()) {
+			mHandler.sendMessage(Message.obtain(mHandler, KEY_HOLD_ENOUGH, key));
+			break;
+		    }
+		}
+	    }
+	}
+
+    }
+    
+    private void handleSpace(final Key key, final float x) {
+	key.setHold();
+
+	mPopupWidth = key.mBounds.width();
+	mPopupHeight = mSpacePreviewIconHeight;
+	mPopupScroll = key.mBounds.width() / 3;
+
+	if (mSliding == null) {
+	    mSliding = new SlidingLocaleDrawable(mContext, mContext.getResources(),
+						 mSpacePreviewIcon,
+						 mPopupWidth, mPopupHeight);
+	}
+	mPopup.setContentView(mPreviewText);
+	mPreviewText.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
+			     MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+	mSliding.setBounds(0, 0, mPopupWidth, mPopupHeight);
+	mSliding.invalidateSelf();
+	mPreviewText.setCompoundDrawables(null, null, null, mSliding);
+			
+	mPopupHeight =  mContext.getResources().getDimensionPixelSize(R.dimen.key_preview_height);
+	mPopupWidth = Math.max(mPreviewText.getMeasuredWidth(), key.mBounds.width()
+			       + mPreviewText.getPaddingLeft() + mPreviewText.getPaddingRight());
+	mPopup.setWidth(mPopupWidth);
+	mPopup.setHeight(mPopupHeight);
+	LayoutParams lp = mPreviewText.getLayoutParams();
+	if (lp != null) {
+	    lp.width = mPopupWidth;
+	    lp.height = mPopupHeight;
+	}
+	mPreviewText.setVisibility(VISIBLE);
+
+	int px = (int) (key.mBounds.right - key.mBounds.left - mPopupWidth) / 2 + key.mBounds.left;
+	int py = (int) key.mBounds.top - mPopupHeight + SystemParams.getInstance().getKeyboardOffset();
+
+	mPopup.showAtLocation((View) this, Gravity.NO_GRAVITY, px, py);
+	originalScrollX = (int) x;
+	mSpaceKeyWidth = mPopupWidth;
+    }
+    
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 	super.onTouchEvent(event);
@@ -109,51 +197,30 @@ public class KbView extends View {
 		inter = key.mBounds.contains((int) event.getX(), (int) event.getY());
 		if (!inter) continue;
 		if (event.getAction() == MotionEvent.ACTION_DOWN) {
+		    key.mX = event.getX();
 		    mPressedKey.add(key);
 		    key.setPressed();
 		    invalidate(key.mBounds);
-		    if (key.mType == KeyType.SPACE) {
-			mPopupWidth = key.mBounds.width();
-			mPopupHeight = mSpacePreviewIconHeight;
-			mPopupScroll = key.mBounds.width() / 3;
-			if (mSliding == null) {
-			    mSliding = new SlidingLocaleDrawable(mContext, mContext.getResources(),
-								 mSpacePreviewIcon,
-								 mPopupWidth, mPopupHeight);
-			}
-			mPopup.setContentView(mPreviewText);
-			mPreviewText.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
-					 MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-			mSliding.setBounds(0, 0, mPopupWidth, mPopupHeight);
-			mSliding.invalidateSelf();
-			mPreviewText.setCompoundDrawables(null, null, null, mSliding);
-			
-			mPopupHeight =  mContext.getResources().getDimensionPixelSize(R.dimen.key_preview_height);
-			mPopupWidth = Math.max(mPreviewText.getMeasuredWidth(), key.mBounds.width()
-					       + mPreviewText.getPaddingLeft() + mPreviewText.getPaddingRight());
-			mPopup.setWidth(mPopupWidth);
-			mPopup.setHeight(mPopupHeight);
-			LayoutParams lp = mPreviewText.getLayoutParams();
-			if (lp != null) {
-			    lp.width = mPopupWidth;
-			    lp.height = mPopupHeight;
-			}
-			mPreviewText.setVisibility(VISIBLE);
-
-			int px = (int) (key.mBounds.right - key.mBounds.left - mPopupWidth) / 2 + key.mBounds.left;
-			int py = (int) key.mBounds.top - mPopupHeight + SystemParams.getInstance().getKeyboardOffset();
-
-			mPopup.showAtLocation((View) this, Gravity.NO_GRAVITY, px, py);
-			originalScrollX = (int) event.getX();
-			mSpaceKeyWidth = mPopupWidth;
+		    synchronized(mPressedKey) {
+			mPressedKey.notifyAll();
 		    }
 		} else if (event.getAction() == MotionEvent.ACTION_MOVE && mListener != null) {
-		    if (mPopup != null) {
-			mSliding.setDiff(((int) event.getX() - originalScrollX));
-			mSliding.invalidateSelf();
+		    if (key.mType == KeyType.SPACE) {
+			Log.i("MicroIME", "Duration " + key.getPressedDuration());
+		    }
+		    if (key.mType == KeyType.SPACE) {
+			if (key.isHoldTimeReach() && !key.isHold()) handleSpace(key, event.getX());
+
+			if (key.isHold() && mPopup != null) {
+			    mSliding.setDiff(((int) event.getX() - originalScrollX));
+			    mSliding.invalidateSelf();
+			}
 		    }
 		} else if (event.getAction() == MotionEvent.ACTION_UP && mListener != null) {
-		    if (mPopup != null) {
+		    boolean isKeyHold = false;
+		    if (key.isHold()) {
+			isKeyHold = true;
+			key.setRelease();
 			mPopup.dismiss();
 			invalidate();
 			if (mSpaceKeyWidth > 0) {
@@ -169,12 +236,21 @@ public class KbView extends View {
 		    }
 		    key.setRelease();
 		    mDirtyBound.set(key.mBounds);
-		    for (int i = 0; i < mPressedKey.size(); i++) {
-			mDirtyBound.union(mPressedKey.get(i).mBounds);
-			mPressedKey.get(i).setRelease();
+		    synchronized(mPressedKey) {
+			for (int i = 0; i < mPressedKey.size(); i++) {
+			    final Key pkey = mPressedKey.get(i);
+			    mDirtyBound.union(pkey.mBounds);
+			    if (pkey.isHold()) {
+				pkey.setRelease();
+				mPopup.dismiss();
+				invalidate();
+			    }
+			    pkey.setRelease();
+			}
+			mPressedKey.clear();
 		    }
 		    invalidate(mDirtyBound);
-		    mListener.keyPressed(key.mKey[0], key.mType);
+		    if (isKeyHold) mListener.keyPressed(key.mKey[0], key.mType);
 		}
 		return true;
 	    }
@@ -184,11 +260,20 @@ public class KbView extends View {
 	    if (mPopup != null) {
 		mPopup.dismiss();
 	    }
-	    for (int i = 0; i < mPressedKey.size(); i++) {
-		if (i == 0) 
-		    mDirtyBound.set(mPressedKey.get(i).mBounds);
-		else mDirtyBound.union(mPressedKey.get(i).mBounds);
-		mPressedKey.get(i).setRelease();
+	    synchronized(mPressedKey) {
+		for (int i = 0; i < mPressedKey.size(); i++) {
+		    final Key key = mPressedKey.get(i);
+		    if (i == 0) 
+			mDirtyBound.set(key.mBounds);
+		    else mDirtyBound.union(key.mBounds);
+		    if (key.isHold()) {
+			key.setRelease();
+			mPopup.dismiss();
+			invalidate();
+		    }
+		    key.setRelease();
+		}
+		mPressedKey.clear();
 	    }
 	    invalidate(mDirtyBound);
 	}

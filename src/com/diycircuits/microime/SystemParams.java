@@ -258,4 +258,8 @@ public class SystemParams {
 	return mKbOffset;
     }
 
+    public int getHoldTime() {
+	return 1000;
+    }
+
 }

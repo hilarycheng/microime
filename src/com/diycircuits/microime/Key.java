@@ -26,12 +26,23 @@ public class Key {
 
     public float mMainY = (float) 0.0;
 
+    public long mStartPress = -1;
+
+    public boolean mHold = false;
+
+    public boolean mPressed = false;
+
+    public float mX = 0;
+
     public void setPressed() {
 	if (mType == KeyType.ACTION || mType == KeyType.INPUT_METHOD || mType == KeyType.DELETE || mType == KeyType.SHIFT || mType == KeyType.TAB) {
 	    mStates[1] = android.R.attr.state_pressed;
 	} else {
 	    mStates[0] = android.R.attr.state_pressed;
 	}
+
+	mPressed = true;
+	mStartPress = System.currentTimeMillis();
     }
 
     public void setRelease() {
@@ -40,6 +51,29 @@ public class Key {
 	} else {
 	    mStates[0] = 0;
 	}
+
+	mPressed = false;
+	mStartPress = -1; mHold = false;
+    }
+
+    public long getPressedDuration() {
+	if (mStartPress == -1) return 0;
+	return System.currentTimeMillis() - mStartPress;
+    }
+    
+    public void setHold() {
+	mHold = true;
+    }
+
+    public boolean isHold() {
+	return mHold;
+    }
+
+    public boolean isHoldTimeReach() {
+	long dur = getPressedDuration();
+	if (dur == -1 || dur < SystemParams.getInstance().getHoldTime()) return false;
+
+	return true;
     }
     
     public String toString() {
