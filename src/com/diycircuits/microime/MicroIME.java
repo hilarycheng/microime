@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodSubtype;
 import android.view.inputmethod.CompletionInfo;
+import android.view.inputmethod.InputConnection;
 import android.util.Log;
 import android.content.pm.ApplicationInfo;
 import java.io.UnsupportedEncodingException;
@@ -113,17 +114,35 @@ public class MicroIME extends InputMethodService implements KeyListener, Candida
         super.requestHideSelf(flags);
     }
 
+    private void commit(String text) {
+        InputConnection ic = getCurrentInputConnection();
+        if (ic != null) {
+	    ic.commitText(text, 1);
+	}
+    }
+
     public void keyPressed(char code, KeyType type) {
 	Log.i("MicroIME", "Key Pressed " + code + " " + type);
-	mCangjie.handleCharacter(0, 0, code);
+	if (type == KeyType.NORMAL) {
+	    mCangjie.handleCharacter(0, 0, code);
+	} else if (type == KeyType.DELETE) {
+	    if (mCangjie.isEmpty()) 
+		getCurrentInputConnection().deleteSurroundingText(1, 0);
+	    else
+		mCangjie.deleteLastCode();
+	} else if (type == KeyType.SPACE) {
+	    if (mCangjie.hasMatch()) mCangjie.sendFirstCharacter();
+	}
     }
     
     public void characterSelected(char c, int idx) {
 	Log.i("MicroIME", "Character Selected " + c + " " + idx);
+	commit("" + c);
     }
     
     public void phraseSelected(String phrase, int idx) {
 	Log.i("MicroIME", "Phrase Selected " + phrase + " " + idx);
+	commit(phrase);
     }
 
 }

@@ -105,6 +105,10 @@ public class Cangjie implements CandidateListener {
 	// }
     }
 
+    public boolean isEmpty() {
+	return mCodeCount == 0;
+    }
+    
     public boolean isFull() {
 	// Log.i("Cangjie", "Cangjie is Full " + mCodeCount + " " + mTable.getMaxKey());
 	return mCodeCount >= mTable.getMaxKey();
