@@ -259,7 +259,7 @@ public class SystemParams {
     }
 
     public int getHoldTime() {
-	return 1000;
+	return 500;
     }
 
 }

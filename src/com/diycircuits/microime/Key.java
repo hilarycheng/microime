@@ -34,6 +34,8 @@ public class Key {
 
     public float mX = 0;
 
+    public boolean mPopupShown = false;
+
     public void setPressed() {
 	if (mType == KeyType.ACTION || mType == KeyType.INPUT_METHOD || mType == KeyType.DELETE || mType == KeyType.SHIFT || mType == KeyType.TAB) {
 	    mStates[1] = android.R.attr.state_pressed;

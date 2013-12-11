@@ -27,10 +27,11 @@ import android.view.LayoutInflater;
 import android.view.Gravity;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.util.TypedValue;
 import android.view.ViewGroup.LayoutParams;
 
-public class KbView extends View implements Runnable, Handler.Callback {
+public class KbView extends View {
 
     private final static int KEY_HOLD_ENOUGH = 1;
     
@@ -51,12 +52,15 @@ public class KbView extends View implements Runnable, Handler.Callback {
     private SlidingLocaleDrawable mSliding = null;
     private int mSpacePreviewIconHeight = 0;
     private int mSpaceKeyWidth = 0;
-    private Handler mHandler = new Handler(this);
+    private boolean mOnTouchDown = false, mPopupShown = false;
+    private KeyPressTimer mTimer = null;
 
     public KbView(Context context, AttributeSet attrs) {
     	super(context, attrs);
 
 	mContext = context;
+
+	mTimer = new KeyPressTimer();
     	mNormal = getResources().getDrawable(R.drawable.btn_keyboard_key_ics);
 
         mPaint = new Paint();
@@ -75,8 +79,6 @@ public class KbView extends View implements Runnable, Handler.Callback {
         mPopup.setTouchable(false);
 	mSpacePreviewIcon = context.getResources().getDrawable(R.drawable.sym_keyboard_feedback_space);
 	mSpacePreviewIconHeight = mSpacePreviewIcon.getIntrinsicHeight();
-
-	new Thread(this).start();
     }
 
     public void setKeyListener(KeyListener listen) {
@@ -101,50 +103,43 @@ public class KbView extends View implements Runnable, Handler.Callback {
 	view.addView(text);
     }
 
-    public boolean handleMessage(Message msg) {
-	switch (msg.what) {
-	case KEY_HOLD_ENOUGH:
-	    final Key key = (Key) msg.obj;
-	    if (key.mType == KeyType.SPACE) {
-		handleSpace(key, key.mX);
-	    }
-	    break;
-	default:
-	    break;
+    class KeyPressTimer extends Handler implements Runnable {
+
+	private static final int LONG_PRESS_TIMEOUT1 = 500;
+	private int mCount = 0;
+	
+	public void start() {
+            postAtTime(this, SystemClock.uptimeMillis() + LONG_PRESS_TIMEOUT1);
+	    mCount = 0;
 	}
 
-	return true;
-    }
-    
-    public void run() {
-
-	while (true) {
-	    // synchronized(mPressedKey) {
-	    // 	try {
-	    // 	    mPressedKey.wait(200);
-	    // 	} catch (Exception ex) {
-	    // 	}
-	    // }
-	    try {
-		Thread.sleep(500);
-	    } catch (Exception ex) {
-	    }
-	    synchronized(mPressedKey) {
-		for (int count = 0; count < mPressedKey.size(); count++) {
-		    final Key key = mPressedKey.get(count);
-		    if (key.mType == KeyType.SPACE) Log.i("MicroIME", "Key " + key.mPressed + " " + key.getPressedDuration() + " " + key.isHold());
-		    if (key.mPressed && key.isHoldTimeReach() && !key.isHold()) {
-			mHandler.sendMessage(Message.obtain(mHandler, KEY_HOLD_ENOUGH, key));
-			break;
+	public void stop() {
+            removeCallbacks(this);
+	}
+	
+	public void run() {
+	    if (mOnTouchDown) {
+		mCount++;
+		if (mCount == 1) {
+		    synchronized(mPressedKey) {
+			for (int count = 0; count < mPressedKey.size(); count++) {
+			    final Key key = mPressedKey.get(count);
+			    if (key.mType == KeyType.SPACE) Log.i("MicroIME", "Key " + key.mPressed + " " + key.getPressedDuration() + " " + key.isHold());
+			    if (key.mType == KeyType.SPACE && key.mPressed && key.isHoldTimeReach() && !key.isHold()) {
+				handleSpace(key, key.mX);
+				break;
+			    }
+			}
 		    }
 		}
 	    }
 	}
-
     }
     
     private void handleSpace(final Key key, final float x) {
 	key.setHold();
+
+	mPopupShown = true;
 
 	mPopupWidth = key.mBounds.width();
 	mPopupHeight = mSpacePreviewIconHeight;
@@ -177,6 +172,8 @@ public class KbView extends View implements Runnable, Handler.Callback {
 	int px = (int) (key.mBounds.right - key.mBounds.left - mPopupWidth) / 2 + key.mBounds.left;
 	int py = (int) key.mBounds.top - mPopupHeight + SystemParams.getInstance().getKeyboardOffset();
 
+	key.mPopupShown = true;
+	
 	mPopup.showAtLocation((View) this, Gravity.NO_GRAVITY, px, py);
 	originalScrollX = (int) x;
 	mSpaceKeyWidth = mPopupWidth;
@@ -197,26 +194,34 @@ public class KbView extends View implements Runnable, Handler.Callback {
 		inter = key.mBounds.contains((int) event.getX(), (int) event.getY());
 		if (!inter) continue;
 		if (event.getAction() == MotionEvent.ACTION_DOWN) {
+		    key.mPopupShown = false;
+		    mOnTouchDown = true;
 		    key.mX = event.getX();
 		    mPressedKey.add(key);
 		    key.setPressed();
 		    invalidate(key.mBounds);
-		    synchronized(mPressedKey) {
-			mPressedKey.notifyAll();
-		    }
+		    mTimer.start();
 		} else if (event.getAction() == MotionEvent.ACTION_MOVE && mListener != null) {
-		    if (key.mType == KeyType.SPACE) {
-			Log.i("MicroIME", "Duration " + key.getPressedDuration());
-		    }
-		    if (key.mType == KeyType.SPACE) {
-			if (key.isHoldTimeReach() && !key.isHold()) handleSpace(key, event.getX());
+		    // if (key.mType == KeyType.SPACE) {
+		    // 	if (key.isHoldTimeReach() && !key.isHold()) handleSpace(key, event.getX());
 
-			if (key.isHold() && mPopup != null) {
-			    mSliding.setDiff(((int) event.getX() - originalScrollX));
-			    mSliding.invalidateSelf();
-			}
+		    // boolean mHasPopup = false;
+		    // synchronized(mPressedKey) {
+		    // 	for (int i = 0; i < mPressedKey.size(); i++) {
+		    // 	    if (mPressedKey.get(i).mPopupShown) {
+		    // 		mHasPopup = true;
+		    // 		break;
+		    // 	    }
+		    // 	}
+		    // }
+		    if (mPopupShown && mPopup != null) {
+			mSliding.setDiff(((int) event.getX() - originalScrollX));
+			mSliding.invalidateSelf();
 		    }
 		} else if (event.getAction() == MotionEvent.ACTION_UP && mListener != null) {
+		    mOnTouchDown = false;
+		    mTimer.stop();
+		    /*
 		    boolean isKeyHold = false;
 		    if (key.isHold()) {
 			isKeyHold = true;
@@ -249,8 +254,38 @@ public class KbView extends View implements Runnable, Handler.Callback {
 			}
 			mPressedKey.clear();
 		    }
-		    invalidate(mDirtyBound);
-		    if (isKeyHold) mListener.keyPressed(key.mKey[0], key.mType);
+		    */
+
+		    boolean mHasPopup = false;
+		    Key popupShown = null;
+		    synchronized(mPressedKey) {
+			for (int i = 0; i < mPressedKey.size(); i++) {
+			    final Key pkey = mPressedKey.get(i);
+			    mHasPopup = pkey.mPopupShown;
+			    if (mHasPopup) popupShown = pkey;
+			    pkey.setRelease();
+			    mDirtyBound.union(pkey.mBounds);
+			}
+		    }
+
+		    if (mHasPopup) {
+			if (popupShown != null && popupShown.mType == KeyType.SPACE && mSpaceKeyWidth > 0) {
+			    mPopup.dismiss();
+			    mPopupShown = false;
+			    Log.i("MicroIME", "Which Method " + Math.abs(((int) event.getX() - originalScrollX)) + " " + (mSpaceKeyWidth * 0.6));
+			    if ((float) Math.abs(((int) event.getX() - originalScrollX)) >= (float) (mSpaceKeyWidth * 0.6)) {
+				if (KeyboardState.getInstance().getKeyboardIndex() == 0)
+				    KeyboardState.getInstance().setKeyboardIndex(1);
+				else if (KeyboardState.getInstance().getKeyboardIndex() == 1)
+				    KeyboardState.getInstance().setKeyboardIndex(0);
+				invalidate();
+			    }
+			}
+			invalidate();
+		    } else {
+			invalidate(mDirtyBound);
+			mListener.keyPressed(key.mKey[0], key.mType);
+		    }
 		}
 		return true;
 	    }
