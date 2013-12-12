@@ -124,14 +124,32 @@ public class MicroIME extends InputMethodService implements KeyListener, Candida
     public void keyPressed(char code, KeyType type) {
 	Log.i("MicroIME", "Key Pressed " + code + " " + type);
 	if (type == KeyType.NORMAL) {
-	    mCangjie.handleCharacter(0, 0, code);
+	    if (KeyboardState.getInstance().getCurrentInputMethod() == R.string.qwerty) {
+		commit("" + code);
+	    } else {
+		mCangjie.handleCharacter(0, 0, code);
+	    }
 	} else if (type == KeyType.DELETE) {
-	    if (mCangjie.isEmpty()) 
+	    if (KeyboardState.getInstance().getCurrentInputMethod() == R.string.qwerty) {
 		getCurrentInputConnection().deleteSurroundingText(1, 0);
-	    else
+	    } else if (mCangjie.isEmpty() && KeyboardState.getInstance().getCurrentInputMethod() != R.string.qwerty) {
+		getCurrentInputConnection().deleteSurroundingText(1, 0);
+	    } else {
 		mCangjie.deleteLastCode();
+	    }
 	} else if (type == KeyType.SPACE) {
-	    if (mCangjie.hasMatch()) mCangjie.sendFirstCharacter();
+	    if (KeyboardState.getInstance().getCurrentInputMethod() == R.string.qwerty) {
+		commit(" ");
+	    } else {
+		if (mCangjie.hasMatch())
+		    mCangjie.sendFirstCharacter();
+		else if (mCangjie.isEmpty())
+		    commit(" ");
+	    }
+	} else if (type == KeyType.COMMA) {
+	    commit(",");
+	} else if (type == KeyType.DOT) {
+	    commit(".");
 	}
     }
     
