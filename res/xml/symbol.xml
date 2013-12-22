@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<keyboard name="QWERTY">
+<keyboard name="SYMBOL">
   <row size="25%">
     <keys size="10%" value="1234567890" />
   </row>

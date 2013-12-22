@@ -193,7 +193,9 @@ public class SystemParams {
 		    } else if (tag.compareTo("keys") == 0) {
 			double size = getXmlSize(xrp, "size", 0.0); 
 			String value = getXmlString(xrp, "value", "");
-			row.addKeys(size, value);
+			String shift = getXmlString(xrp, "shift", "");
+			String alt   = getXmlString(xrp, "alt", "");
+			row.addKeys(size, value, shift, alt);
 		    } else if (tag.compareTo("key") == 0) {
 			double size = getXmlSize(xrp, "size", 0.0); 
 			String value = getXmlString(xrp, "type", "");

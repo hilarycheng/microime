@@ -6,14 +6,14 @@
   </row>
   -->
   <row size="25%">
-    <keys size="10%" value="QWERTYUIOP" />
+    <keys size="10%" value="QWERTYUIOP" alt="1234567890" shift="qwertyuiop" />
   </row>
   <row size="25%" offset="5%">
-    <keys size="10%" value="ASDFGHJKL" />
+    <keys size="10%" value="ASDFGHJKL" alt="\@#$%&#38;*-+!" shift="asdfghjkl" />
   </row>
   <row size="25%">
     <key size="15%" type="shift" />
-    <keys size="10%" value="ZXCVBNM" />
+    <keys size="10%" value="ZXCVBNM" alt="()&quot;':;/" shift="zxcvbnm"  />
     <key size="15%" type="delete" />
   </row>
   <row size="25%">

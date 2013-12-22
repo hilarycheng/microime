@@ -9,6 +9,10 @@ public class Key {
     public double mSize = 0.0;
 
     public char mKey[] = new char[4];
+    
+    public char mAlt = 0;
+
+    public char mShift = 0;
 
     public int mKeyLen = 0;
 

@@ -64,11 +64,13 @@ public class KeyRow {
 	mKeyList.add(key);
     }
 
-    public void addKeys(double size, String value) {
+    public void addKeys(double size, String value, String shift, String alt) {
 	for (int count = 0; count < value.length(); count++) {
 	    Key key = new Key();
 	    key.mSize = size;
 	    key.mKey[0] = value.charAt(count);
+	    if (alt.length() == value.length()) key.mAlt = alt.charAt(count);
+	    if (shift.length() == value.length()) key.mShift = shift.charAt(count);
 	    key.mKeyLen = 1;
 	    key.mType = KeyType.NORMAL;
 	    mKeyList.add(key);

@@ -6,14 +6,14 @@
   </row>
   -->
   <row size="25%">
-    <keys size="10%" value="手田水口廿卜山戈人心" />
+    <keys size="10%" value="手田水口廿卜山戈人心" alt="1234567890" />
   </row>
   <row size="25%" offset="5%">
-    <keys size="10%" value="日尸木火土竹十大中" />
+    <keys size="10%" value="日尸木火土竹十大中" alt="（）「」，、。！：" />
   </row>
   <row size="25%">
     <key size="15%" type="shift" />
-    <keys size="10%" value="＊難金女月弓一" />
+    <keys size="10%" value="＊難金女月弓一" alt="；，『』”；？" />
     <key size="15%" type="delete" />
   </row>
   <row size="25%">
