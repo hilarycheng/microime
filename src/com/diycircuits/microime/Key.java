@@ -10,9 +10,11 @@ public class Key {
 
     public char mKey[] = new char[4];
     
-    public char mAlt = 0;
+    public char mAlt[] = new char[1];
 
-    public char mShift = 0;
+    public char mShift[] = new char[1];
+
+    public int mAltFontSize = 0;
 
     public int mKeyLen = 0;
 
@@ -30,6 +32,10 @@ public class Key {
 
     public float mMainY = (float) 0.0;
 
+    public float mAltX = (float) 0.0;
+
+    public float mAltY = (float) 0.0;
+    
     public long mStartPress = -1;
 
     public boolean mHold = false;

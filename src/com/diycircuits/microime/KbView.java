@@ -340,6 +340,12 @@ public class KbView extends View {
 		    mPaint.setTextSize(key.mFontSize);
 		    mPaint.setTextAlign(Paint.Align.CENTER);
 		    canvas.drawText(key.mKey, 0, key.mKeyLen, key.mMainX, key.mMainY, mPaint);
+
+		    if (key.mAlt[0] != 0) {
+			mPaint.setTextSize(key.mAltFontSize);
+			// mPaint.setTextAlign(Paint.Align.RIGHT);
+			canvas.drawText(key.mAlt, 0, 1, key.mAltX, key.mAltY, mPaint);
+		    }
 		} else {
 		    final Drawable icon = SystemParams.getInstance().getIcon(key.mType);
 		    if (icon != null) {

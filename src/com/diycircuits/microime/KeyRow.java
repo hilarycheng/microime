@@ -69,8 +69,8 @@ public class KeyRow {
 	    Key key = new Key();
 	    key.mSize = size;
 	    key.mKey[0] = value.charAt(count);
-	    if (alt.length() == value.length()) key.mAlt = alt.charAt(count);
-	    if (shift.length() == value.length()) key.mShift = shift.charAt(count);
+	    if (alt != null && alt.length() == value.length()) key.mAlt[0] = alt.charAt(count);
+	    if (shift != null && shift.length() == value.length()) key.mShift[0] = shift.charAt(count);
 	    key.mKeyLen = 1;
 	    key.mType = KeyType.NORMAL;
 	    mKeyList.add(key);

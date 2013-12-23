@@ -20,10 +20,14 @@ import android.graphics.Paint.FontMetricsInt;
 public class SystemParams {
 
     private static SystemParams mInstance = new SystemParams();
+
     private int mKbWidth  = 0;
     private int mKbHeight = 0;
     private int mKbCandidateHeight = 0;
     private int mKbOffset = 0;
+    private int mKbHintPaddingX = 0;
+    private int mKbHintPaddingY = 0;
+    private char mAlt[] = { '8' };
     private boolean mKeyboardLoaded = false;
     private SparseArray<Keyboard> mKeyboard = new SparseArray<Keyboard>();
     private SparseArray<Drawable> mKeyIcon = new SparseArray<Drawable>();
@@ -60,6 +64,8 @@ public class SystemParams {
     	// mKbHeight = (int) (screenHeight * 0.45);
 
 	mKbOffset = context.getResources().getDimensionPixelSize(R.dimen.suggestions_strip_height);
+	mKbHintPaddingX = context.getResources().getDimensionPixelSize(R.dimen.key_hint_letter_padding_x);
+	mKbHintPaddingY = context.getResources().getDimensionPixelSize(R.dimen.key_hint_letter_padding_y);
 	// mKbCandidateHeight = mKbHeight;
 	// mKbHeight = mKbHeight - mKbOffset;
 	mKbCandidateHeight = mKbHeight + mKbOffset;
@@ -143,14 +149,21 @@ public class SystemParams {
 		    mPaint.getTextBounds(key.mKey, 0, key.mKeyLen, mTextBounds);
 		    final float textWidth = mTextBounds.width();
 		    final float textHeight = mTextBounds.height();
-
 		    float mx = x + keyWidth / 2;
-		    // float my = (keyHeight - textWidth) / 2.0f;
-		    // my = y + keyYMargin + my - mFmi.top + mFmi.bottom / 1.5f;
 		    float my = y + (keyHeight / 2) + textHeight / 2;
 
 		    key.mMainX = mx;
 		    key.mMainY = my;
+
+		    if (key.mAlt[0] != 0) {
+			key.mAltFontSize = (int) (key.mFontSize * 0.4);
+			mPaint.setTextSize(key.mAltFontSize);
+			mPaint.getTextBounds(mAlt, 0, 1, mTextBounds);
+
+			key.mAltX = (int) (x + keyWidth - keyXMargin) - mTextBounds.width() - mKbHintPaddingX;
+			key.mAltY = (int) (y + keyYMargin) - mPaint.ascent() + mKbHintPaddingY;
+		    }
+
 		} else {
 		    final Drawable icon = getIcon(key.mType);
 		    if (icon != null) {

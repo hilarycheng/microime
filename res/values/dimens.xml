@@ -4,4 +4,6 @@
   <dimen name="textSizeSymbol">14sp</dimen>
   <dimen name="key_preview_height">80sp</dimen>
   <dimen name="suggestions_strip_height">40dp</dimen>
+  <dimen name="key_hint_letter_padding_x">2dp</dimen>
+  <dimen name="key_hint_letter_padding_y">3dp</dimen>
 </resources>
