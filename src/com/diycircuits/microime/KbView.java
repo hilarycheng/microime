@@ -338,6 +338,8 @@ public class KbView extends View {
 		if (key.mType == KeyType.NORMAL ||
 		    key.mType == KeyType.DOT ||
 		    key.mType == KeyType.INPUT_METHOD ||
+		    key.mType == KeyType.SYMBOLS ||
+		    key.mType == KeyType.MORESYMBOLS ||
 		    key.mType == KeyType.COMMA) {
 
 		    mPaint.setColor(Color.WHITE);

@@ -128,7 +128,12 @@ public class SystemParams {
 
 		if (key.mType == KeyType.ACTION) {
 		    key.mStates[0] = android.R.attr.state_active;
-		} else if (key.mType == KeyType.INPUT_METHOD || key.mType == KeyType.DELETE || key.mType == KeyType.SHIFT || key.mType == KeyType.TAB) {
+		} else if (key.mType == KeyType.INPUT_METHOD ||
+			   key.mType == KeyType.DELETE ||
+			   key.mType == KeyType.SHIFT ||
+			   key.mType == KeyType.SYMBOLS||
+			   key.mType == KeyType.MORESYMBOLS ||
+			   key.mType == KeyType.TAB) {
 		    key.mStates[0] = android.R.attr.state_single;
 		} else {
 		    key.mStates[0] = 0;
@@ -137,11 +142,15 @@ public class SystemParams {
 		if (key.mType == KeyType.NORMAL ||
 		    key.mType == KeyType.DOT ||
 		    key.mType == KeyType.INPUT_METHOD ||
+		    key.mType == KeyType.SYMBOLS || 
+		    key.mType == KeyType.MORESYMBOLS || 
 		    key.mType == KeyType.COMMA) {
 
 		    // key.mFontSize = context.getResources().getDimensionPixelSize(R.dimen.textSize);
 		    key.mFontSize = (int) (keyHeight * 0.40);
-		    if (key.mType == KeyType.INPUT_METHOD) {
+		    if (key.mType == KeyType.INPUT_METHOD ||
+			key.mType == KeyType.SYMBOLS ||
+			key.mType == KeyType.MORESYMBOLS) {
 			// key.mFontSize = context.getResources().getDimensionPixelSize(R.dimen.textSizeSymbol);
 			key.mFontSize = (int) (keyHeight * 0.30);
 		    }

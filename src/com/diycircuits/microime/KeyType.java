@@ -16,6 +16,8 @@ public enum KeyType {
 
     SYMBOLS,
 
+    MORESYMBOLS,
+
     COMMA,
 
     SPACE,

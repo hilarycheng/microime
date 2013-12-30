@@ -7,7 +7,7 @@
     <keys size="10%" value="\@#$%&amp;*-+()" />
   </row>
   <row size="25%">
-    <key size="15%" type="shift" />
+    <key size="15%" type="moresymbols" />
     <keys size="10%" value="!&quot;':;/?" />
     <key size="15%" type="delete" />
   </row>

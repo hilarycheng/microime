@@ -28,6 +28,15 @@ public class KeyboardState {
 	return mIndex;
     }
 
+    public void toggleSymbol() {
+	if (mId == R.xml.symbol)
+	    mId = R.xml.moresymbol;
+	else if (mId == R.xml.moresymbol)
+	    mId = R.xml.symbol;
+	else
+	    mId = R.xml.symbol;
+    }
+    
     public void setKeyboardIndex(int index) {
 	switch (index) {
 	case 0:

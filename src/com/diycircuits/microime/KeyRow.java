@@ -54,6 +54,19 @@ public class KeyRow {
 	    key.mKeyLen = 1;
 	} else if (type.compareTo("space") == 0) {
 	    key.mType = KeyType.SPACE;
+	} else if (type.compareTo("moresymbols") == 0) {
+	    key.mType = KeyType.MORESYMBOLS;
+	    key.mKey[0] = '=';
+	    key.mKey[1] = '\\';
+	    key.mKey[2] = '<';
+	    key.mKeyLen = 3;
+	} else if (type.compareTo("symbols") == 0) {
+	    key.mType = KeyType.SYMBOLS;
+	    key.mKey[0] = '?';
+	    key.mKey[1] = '1';
+	    key.mKey[2] = '2';
+	    key.mKey[3] = '3';
+	    key.mKeyLen = 4;
 	} else if (type.compareTo("dot") == 0) {
 	    key.mType = KeyType.DOT;
 	    key.mKey[0] = '.';
