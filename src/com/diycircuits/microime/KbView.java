@@ -284,7 +284,11 @@ public class KbView extends View {
 			invalidate();
 		    } else {
 			invalidate(mDirtyBound);
-			mListener.keyPressed(key.mKey[0], key.mType);
+			if (KeyboardState.getInstance().getShift() == 1 && key.mShift[0] != 0) {
+			    mListener.keyPressed(key.mShift[0], key.mType);
+			} else {
+			    mListener.keyPressed(key.mKey[0], key.mType);
+			}
 		    }
 		}
 		return true;
@@ -339,7 +343,11 @@ public class KbView extends View {
 		    mPaint.setColor(Color.WHITE);
 		    mPaint.setTextSize(key.mFontSize);
 		    mPaint.setTextAlign(Paint.Align.CENTER);
-		    canvas.drawText(key.mKey, 0, key.mKeyLen, key.mMainX, key.mMainY, mPaint);
+		    if (KeyboardState.getInstance().getShift() == 1 && key.mShift[0] != 0) {
+			canvas.drawText(key.mShift, 0, 1, key.mMainX, key.mMainY, mPaint);
+		    } else {
+			canvas.drawText(key.mKey, 0, key.mKeyLen, key.mMainX, key.mMainY, mPaint);
+		    }
 
 		    if (key.mAlt[0] != 0) {
 			mPaint.setTextSize(key.mAltFontSize);

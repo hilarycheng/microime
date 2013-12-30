@@ -10,10 +10,20 @@ public class KeyboardState {
     private int mId = R.xml.qwerty;
 
     private int mIndex = 0;
+
+    private int mShift = 0;
     
     private KeyboardState() {
     }
 
+    public void toggleShift() {
+	mShift = (mShift == 0) ? 1 : 0;
+    }
+
+    public int getShift() {
+	return mShift;
+    }
+    
     public int getKeyboardIndex() {
 	return mIndex;
     }
