@@ -12,6 +12,8 @@ public class KeyboardState {
     private int mIndex = 0;
 
     private int mShift = 0;
+
+    private boolean mSymbol = false;
     
     private KeyboardState() {
     }
@@ -35,6 +37,18 @@ public class KeyboardState {
 	    mId = R.xml.symbol;
 	else
 	    mId = R.xml.symbol;
+
+	mSymbol = true;
+    }
+
+    public void toggleInputMethod() {
+	setKeyboardIndex(mIndex);
+
+	mSymbol = false;
+    }
+
+    public boolean isSymbol() {
+	return mSymbol;
     }
     
     public void setKeyboardIndex(int index) {

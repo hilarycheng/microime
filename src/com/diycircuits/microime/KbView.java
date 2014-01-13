@@ -348,6 +348,7 @@ public class KbView extends View {
 		    if (KeyboardState.getInstance().getShift() == 1 && key.mShift[0] != 0) {
 			canvas.drawText(key.mShift, 0, 1, key.mMainX, key.mMainY, mPaint);
 		    } else {
+			key.setSymbolState(KeyboardState.getInstance().isSymbol());
 			canvas.drawText(key.mKey, 0, key.mKeyLen, key.mMainX, key.mMainY, mPaint);
 		    }
 

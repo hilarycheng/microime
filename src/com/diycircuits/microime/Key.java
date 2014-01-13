@@ -46,6 +46,21 @@ public class Key {
 
     public boolean mPopupShown = false;
 
+    public void setSymbolState(boolean isSymbol) {
+	if (mType == KeyType.INPUT_METHOD) {
+	    if (isSymbol) {
+		mKey[0] = 'A';
+		mKeyLen = 1;
+	    } else {
+		mKey[0] = '?';
+		mKey[1] = '1';
+		mKey[2] = '2';
+		mKey[3] = '3';
+		mKeyLen = 4;
+	    }
+	}
+    }
+    
     public void setPressed() {
 	if (mType == KeyType.ACTION || mType == KeyType.INPUT_METHOD || mType == KeyType.DELETE || mType == KeyType.SHIFT || mType == KeyType.TAB) {
 	    mStates[1] = android.R.attr.state_pressed;

@@ -134,6 +134,9 @@ public class MicroIME extends InputMethodService implements KeyListener, Candida
 		KeyboardState.getInstance().toggleShift();
 		mKbContainer.invalidate();
 	    }
+	} else if (type == KeyType.INPUT_METHOD) {
+	    KeyboardState.getInstance().toggleInputMethod();
+	    mKbContainer.invalidate();
 	} else if (type == KeyType.SYMBOLS || type == KeyType.MORESYMBOLS) {
 	    KeyboardState.getInstance().toggleSymbol();
 	    mKbContainer.invalidate();
