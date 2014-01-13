@@ -16,7 +16,7 @@
     <key  size="17%" type="delete" />
   </row>
   <row size="25%">
-    <key size="15%" type="inputmethod" />
+    <key size="15%" type="symbols" />
     <key size="10%" type="comma" />
     <key size="50%" type="space" />
     <key size="10%" type="dot" />

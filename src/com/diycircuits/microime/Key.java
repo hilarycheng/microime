@@ -60,9 +60,16 @@ public class Key {
 	    }
 	}
     }
+
+    public boolean isSpecialKey() {
+	return mType == KeyType.ACTION || mType == KeyType.INPUT_METHOD ||
+	    mType == KeyType.DELETE || mType == KeyType.SHIFT || mType == KeyType.TAB ||
+	    mType == KeyType.SYMBOLS || mType == KeyType.MORESYMBOLS ||
+	    mType == KeyType.INPUT_METHOD;
+    }
     
     public void setPressed() {
-	if (mType == KeyType.ACTION || mType == KeyType.INPUT_METHOD || mType == KeyType.DELETE || mType == KeyType.SHIFT || mType == KeyType.TAB) {
+	if (isSpecialKey()) {
 	    mStates[1] = android.R.attr.state_pressed;
 	} else {
 	    mStates[0] = android.R.attr.state_pressed;
@@ -73,8 +80,9 @@ public class Key {
     }
 
     public void setRelease() {
-	if (mType == KeyType.ACTION || mType == KeyType.INPUT_METHOD || mType == KeyType.DELETE || mType == KeyType.SHIFT || mType == KeyType.TAB) {
+	if (isSpecialKey()) {
 	    mStates[1] = 0;
+	    mStates[0] = android.R.attr.state_single;
 	} else {
 	    mStates[0] = 0;
 	}
