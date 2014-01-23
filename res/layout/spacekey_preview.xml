@@ -24,6 +24,5 @@
     android:textSize="40sp"
     android:minWidth="32dip"
     android:gravity="center"
-    android:textColor="@color/white"
-    android:background="@drawable/keyboard_key_feedback_background_holo"
+    android:background="@drawable/keyboard_key_feedback"
     />

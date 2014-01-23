@@ -18,6 +18,7 @@
 */
 -->
 <resources>
+    <color name="white">#FFFFFFFF</color>
     <color name="candidate_normal">#FFFFFFFF</color>
     <color name="candidate_recommended">#FFFCAE00</color>
     <color name="candidate_other">#FFFCAE00</color>
